@@ -225,6 +225,11 @@ def interpretUnknown(value):
         return value
 
 
+def updateGlobalFields(name, interpretation, type, value):
+	if name in globalFields:
+		globalValues[name] = interpretation
+		
+
 interpretingFunctions = {
         FinalType.Date: interpretDate,
         FinalType.Time: interpretTime,
@@ -244,5 +249,8 @@ interpretingFunctions = {
 
         FinalType.Integer: interpretInteger,
 
-        FinalType.Unknown: interpretUnknown
+        FinalType.Unknown: interpretUnknown,
+		
+		
+	"any": updateGlobalFields
         }

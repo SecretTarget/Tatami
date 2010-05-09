@@ -27,8 +27,10 @@ class FieldType:
 	Counter = 4
 	
 
-def interpretFinalField(value, type):
-        return plugin.getInterpretersTable()[type](value)
+def interpretFinalField(value, type, name):
+        interpretation = plugin.getInterpretersTable()[type](value)
+	plugin.getInterpretersTable()["any"](name, interpretation, type, value)
+	return interpretation
 
 
 class IncorrectStructure(exceptions.Exception):
@@ -124,9 +126,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[]):
 					value = data
 					data = []
 					total += len(value)
-				interpretation = interpretFinalField(value, field[4])
-				if name in globalFields:
-					globalValues[name] = interpretation
+				interpretation = interpretFinalField(value, field[4], name)
 				entry = ("%-35s" % interpretation)+" ---   "+value+" ("+field[3]+")"
 			
 			if hiddenFields:
@@ -147,7 +147,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[]):
 
 def parseCard(connection):
 	card = {}
-	card["ATR"] = plugin.parseATR(getATR(connection))
+	card["ATR"] = plugin.parseATR(ATR(getATR(connection)))
 	card["Content"] = parseCardStruct(connection, plugin.getRootStructure())
 	card["Keys"] = ["ATR", "Content"]
-	return navigo
+	return card

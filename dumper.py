@@ -4,7 +4,7 @@
 # -- dump.py
 # Main file, the dumper
 
-from structure_parser import parseNavigo
+from structure_parser import parseCard
 #from parser import *
 
 from smartcard.System import readers
@@ -13,7 +13,7 @@ from smartcard.pcsc.PCSCExceptions import EstablishContextException
 
 import sys
 import card_interface
-
+import display
 
 
 
@@ -32,7 +32,7 @@ def dumpNavigo(reader):
 	except  (NoCardException, CardConnectionException):
 		return {}
 		
-	return parseNavigo(connection)
+	return parseCard(connection)
 
 
 def dump():
@@ -58,7 +58,7 @@ def dump():
 	if navigo == {}:
 		print reader, "--> no card inserted"
 		return
-	prettyPrint(navigo)
+	display.prettyPrint(navigo)
 	
 
 if __name__ == '__main__':

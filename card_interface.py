@@ -5,6 +5,8 @@
 from smartcard.util import toHexString
 from smartcard.ATR import ATR
 
+import display
+
 # FIXME, ca devrait etre une var globale pour tous les py
 debugMode = False
 
@@ -16,7 +18,7 @@ def selectFile(connection, address):
         addressLen = len(address)
         apdu = [cla, ins, param1, param2, addressLen] + address
         response, sw1, sw2 = connection.transmit(apdu)
-        if debugMode: printExchange(apdu, response, sw1, sw2)
+        if debugMode: display.printExchange(apdu, response, sw1, sw2)
         return response, sw1, sw2
 
 def readRecord(connection, number, length=29):
@@ -27,12 +29,12 @@ def readRecord(connection, number, length=29):
 #        length = 29
         apdu = [cla, ins, number, mode, length]
         response, sw1, sw2 = connection.transmit(apdu)
-        if debugMode: printExchangeWithBinary(apdu, response, sw1, sw2)
+        if debugMode: display.printExchangeWithBinary(apdu, response, sw1, sw2)
         return response, sw1, sw2
 
 def readRecordBinaryResponse(connection, number):
         response, sw1, sw2 = readRecord(connection, number)
-        return toBinaryString(response)
+        return display.toBinaryString(response)
 
 def getATR(connection):
         return connection.getATR()

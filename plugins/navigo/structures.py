@@ -3,7 +3,7 @@
 # -- structures.py
 # Defines the different structures
 
-from final_types import FinalType
+from final_types import FinalType, FieldType
 
 structEnv = [
 	("EnvApplicationVersionNumber", FieldType.Final, 6, "Numéro de version de l’application Billettique", FinalType.ApplicationVersionNumber),

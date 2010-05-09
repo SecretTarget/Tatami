@@ -1,3 +1,10 @@
+class FieldType:
+	DF = 0
+	EF = 1
+	Bitmap = 2
+	Final = 3
+	Counter = 4
+
 class FinalType:
 	Unknown = 0
 	Date = 1

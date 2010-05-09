@@ -5,11 +5,11 @@ import structures
 
 currentStructure = ()
 
-def parseATR(atrValue):
+def parseATR(atrStruct):
 	"""Parse une partie de l'ATR et affiche quelques paramètres intéressants."""
+	global currentStructure
 	atr = {}
 	keys = []
-	atrStruct = ATR(atrValue)
 	historicalBytes = atrStruct.getHistoricalBytes()
 	card_number = historicalBytes[11] + (historicalBytes[10] << 8) \
 		+ (historicalBytes[9] << 16) + (historicalBytes[8] << 24)
@@ -44,6 +44,8 @@ def parseATR(atrValue):
 def getRootStructure():
 	return currentStructure[1]
 
+def getGlobalFields():
+	return interpreters.globalFields
 	
 def getInterpretersTable():
 	return interpreters.interpretingFunctions
