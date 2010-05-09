@@ -28,8 +28,9 @@ class FieldType:
 	
 
 def interpretFinalField(value, type, name):
-        interpretation = plugin.getInterpretersTable()[type](value)
-	plugin.getInterpretersTable()["any"](name, interpretation, type, value)
+	interpretation = plugin.getInterpretersTable()[type](value)
+	if "ANY" in plugin.getInterpretersTable():
+		plugin.getInterpretersTable()["ANY"](name, interpretation, type, value)
 	return interpretation
 
 
@@ -147,7 +148,10 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[]):
 
 def parseCard(connection):
 	card = {}
-	card["ATR"] = plugin.parseATR(ATR(getATR(connection)))
+	if "ATR" in plugin.getInterpretersTable():
+		card["ATR"] = plugin.getInterpretersTable()["ATR"](ATR(getATR(connection)))
+	else:
+		card["ATR"] = toHexString(getATR(connection))
 	card["Content"] = parseCardStruct(connection, plugin.getRootStructure())
 	card["Keys"] = ["ATR", "Content"]
 	return card

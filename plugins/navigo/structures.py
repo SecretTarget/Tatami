@@ -253,4 +253,4 @@ listOfStructs = [
 ]
 
 #defaultNavigoStructure = structCD97
-defaultNavigoStructure = structGTML
+defaultNavigoStructure = ("GTML",structGTML)

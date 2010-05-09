@@ -17,7 +17,6 @@ import display
 
 
 
-
 def getReadersList():
 	try:
 		return readers()
@@ -25,7 +24,7 @@ def getReadersList():
 		return []
 		
 		
-def dumpNavigo(reader):
+def dumpCard(reader):
 	try:
 		connection = reader.createConnection()
 		connection.connect()
@@ -54,15 +53,8 @@ def dump():
 			print "Please type a correct number"
 			return
 			
-	navigo = dumpNavigo(reader)
-	if navigo == {}:
+	card = dumpCard(reader)
+	if card == {}:
 		print reader, "--> no card inserted"
 		return
-	display.prettyPrint(navigo)
-	
-
-if __name__ == '__main__':
-	if len(sys.argv) > 1:
-		card.debugMode = True
-		
-	dump()
+	display.prettyPrint(card)

@@ -3,7 +3,7 @@ from final_types import FinalType
 from stations import *
 
 from datetime import timedelta, date
-
+import structures
 
 globalValues = {}
 
@@ -11,6 +11,8 @@ globalFields = [
 	"EventServiceProvider",
 	"EventCode"
 ]
+
+currentStructure = structures.defaultNavigoStructure
 
 
 def interpretDate(value):
@@ -228,7 +230,37 @@ def interpretUnknown(value):
 def updateGlobalFields(name, interpretation, type, value):
 	if name in globalFields:
 		globalValues[name] = interpretation
-		
+
+
+def parseATR(atrStruct):
+	"""Parse une partie de l'ATR et affiche quelques paramètres intéressants."""
+	global currentStructure
+	atr = {}
+	keys = []
+	historicalBytes = atrStruct.getHistoricalBytes()
+	card_number = historicalBytes[11] + (historicalBytes[10] << 8) \
+		+ (historicalBytes[9] << 16) + (historicalBytes[8] << 24)
+	atr["Card number"] = str(card_number)
+	chipType = historicalBytes[2]
+	atr["Chip type"] = "%02x" % chipType
+	applicationType = historicalBytes[3]
+	atr["Application type"] =  "%02x" % (applicationType)
+	applicationSubtype = historicalBytes[4]
+	atr["Application subtype"] =  "%02x" % (applicationSubtype)
+	issuer = historicalBytes[5]
+	atr["Issuer"] =  "%02x" % (issuer)
+	rom = historicalBytes[6]
+	atr["ROM"] =  "%02x" % (rom)
+	eeprom = historicalBytes[7]
+	atr["EEPROM"] =  "%02x" % (eeprom)
+	
+	currentStructure = structures.cardTypes[atr["Chip type"] + atr["Application type"] + atr["Application subtype"]]
+	atr["Card type"] = currentStructure[0]
+	
+	atr["Keys"] = ["Card number", "Chip type", "Application type", "Application subtype", "Issuer", "ROM", "EEPROM", "Card type"]
+	return atr
+
+
 
 interpretingFunctions = {
         FinalType.Date: interpretDate,
@@ -252,5 +284,6 @@ interpretingFunctions = {
         FinalType.Unknown: interpretUnknown,
 		
 		
-	"any": updateGlobalFields
+	"ANY": updateGlobalFields,
+	"ATR": parseATR,
         }
