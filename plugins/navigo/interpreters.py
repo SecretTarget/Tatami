@@ -29,7 +29,7 @@ def interpretDate(value):
 
 def interpretTime(value):
         time = int(value, 2)
-        res = "%02uh%02u" % (int(time/60), time % 60)
+        res = "%02uh%02u" % (int(time/60.0), time % 60)
         return res
 
 def interpretZones(value):
