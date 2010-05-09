@@ -29,7 +29,7 @@ def interpretDate(value):
 
 def interpretTime(value):
         time = int(value, 2)
-        res = "%02uh%02u" % (time/60, time % 60)
+        res = "%02uh%02u" % (int(time/60), time % 60)
         return res
 
 def interpretZones(value):
@@ -204,7 +204,7 @@ def interpretEventDevice(value):
 	if (not transport == "Bus") or (not globalValues["EventServiceProvider"]=="RATP"):
 		return interpretInteger(value)
 	device = int(value[8:],2)
-	door = device/2+1
+	door = int(device/2.0)+1
 	if device%2 == 0:
 		side = "droite"
 	else:
@@ -226,7 +226,8 @@ def interpretHolderDataCardStatus(value):
 def interpretUnknown(value):
         return value
 
-
+# FIXME: ca sert à quoi ça déjà ?
+# 'type' et 'value' sont pas utilisés
 def updateGlobalFields(name, interpretation, type, value):
 	if name in globalFields:
 		globalValues[name] = interpretation
@@ -236,7 +237,6 @@ def parseATR(atrStruct):
 	"""Parse une partie de l'ATR et affiche quelques paramètres intéressants."""
 	global currentStructure
 	atr = {}
-	keys = []
 	historicalBytes = atrStruct.getHistoricalBytes()
 	card_number = historicalBytes[11] + (historicalBytes[10] << 8) \
 		+ (historicalBytes[9] << 16) + (historicalBytes[8] << 24)
