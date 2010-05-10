@@ -40,12 +40,4 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
-	'''
-	if len(sys.argv) < 2:
-		usage()
-	
-	sys.path.append(sys.argv[1])
-	'''
-	
-	
+	main()	
