@@ -8,7 +8,7 @@ from smartcard.ATR import ATR
 import display
 
 # FIXME, ca devrait etre une var globale pour tous les py
-debugMode = False
+verboseMode = False
 
 def selectFile(connection, address):
         """selectionne un fichier"""
@@ -18,7 +18,7 @@ def selectFile(connection, address):
         addressLen = len(address)
         apdu = [cla, ins, param1, param2, addressLen] + address
         response, sw1, sw2 = connection.transmit(apdu)
-        if debugMode: display.printExchange(apdu, response, sw1, sw2)
+        if verboseMode: display.printExchange(apdu, response, sw1, sw2)
         return response, sw1, sw2
 
 def readRecord(connection, number, length=29):
@@ -26,10 +26,9 @@ def readRecord(connection, number, length=29):
         cla = 0x94
         ins = 0xb2
         mode = 0x04
-#        length = 29
         apdu = [cla, ins, number, mode, length]
         response, sw1, sw2 = connection.transmit(apdu)
-        if debugMode: display.printExchangeWithBinary(apdu, response, sw1, sw2)
+        if verboseMode: display.printExchangeWithBinary(apdu, response, sw1, sw2)
         return response, sw1, sw2
 
 def readRecordBinaryResponse(connection, number):

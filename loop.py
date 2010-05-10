@@ -1,11 +1,8 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# -- dump.py
-# Main file, the dumper
+# -- loop.py
+# Card scanner
 
-from card_parser import parseNavigo
-#from parser import *
 
 from smartcard.System import readers
 from smartcard.Exceptions import NoCardException, CardConnectionException
@@ -17,7 +14,7 @@ from time import sleep
 from os import sep
 
 import sys
-import card
+import structure_parser
 import Tkinter
 import os
 import datetime
@@ -146,10 +143,3 @@ def dump():
 			break
 
 	cardmonitor.deleteObserver(cardobserver)
-
-
-if __name__ == '__main__':
-	if len(sys.argv) > 1:
-		card.debugMode = True
-
-	dump()

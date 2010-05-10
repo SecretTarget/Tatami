@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from smartcard.util import toHexString
+
 def toBinaryString(tab):
         """retourne la chaine de la representation binaire de tab"""
         s = ''
@@ -18,6 +20,17 @@ def printExchangeWithBinary(query, response, sw1, sw2):
         """Affiche un échange query-response, avec en plus la reponse en binaire."""
         printExchange(query, response, sw1, sw2)
         print "\t ==  ", toBinaryString(response)
+
+
+def printAddress(address, space):
+    length = len(address)
+    print space, "[0x%02x%02x]" % (address[length-2], address[length-1])
+	
+	
+def printRecord(response, nb):
+    print "====  ", nb, "  ===="
+    print "\t", toBinaryString(response), "\n"
+
 
 def prettyPrint(data, tabs=""):
         if type(data) == type(dict()):

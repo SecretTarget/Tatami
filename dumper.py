@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # -- dump.py
-# Main file, the dumper
+# The dumper
 
 from structure_parser import parseCard
-#from parser import *
+
 
 from smartcard.System import readers
 from smartcard.Exceptions import NoCardException, CardConnectionException

@@ -3,9 +3,7 @@
 # -- card_parser.py
 # Defines the parsing functions
 
-#from symbols import *
-#from structures import *
-#from interpreters import *
+
 import plugin
 from card_interface import *
 
@@ -16,7 +14,6 @@ import exceptions
 
 
 MAX_RECORDS = 10
-debugMode = False
 
 
 class FieldType:
