@@ -25,6 +25,7 @@ def connectToCard(card):
 	try:
 		card.connection = card.createConnection()
 		card.connection.connect()
+		return True
 	except  (NoCardException, CardConnectionException):
 		return False
 		

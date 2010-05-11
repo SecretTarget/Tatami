@@ -3,23 +3,20 @@
 # -- loop.py
 # Card scanner
 
-
-from smartcard.System import readers
 from smartcard.Exceptions import NoCardException, CardConnectionException
 from smartcard.pcsc.PCSCExceptions import EstablishContextException
 from smartcard.CardMonitoring import CardMonitor, CardObserver
 from smartcard.util import toHexString
 
-from time import sleep
-from os import sep
 
-import sys
 import structure_parser
 import card_interface
 import Tkinter
 import os
 import datetime
 import exceptions
+import display
+import time
 
 class ReloadDump(exceptions.Exception):
 	def __init__(self):
@@ -69,7 +66,7 @@ class observer(CardObserver):
 												 toHexString(card.atr))
 						print filename,
 						file = open(filename, 'w')
-						prettyPrintToFile(navigo, file)
+						display.prettyPrintToFile(content, file)
 						file.close()
 						print ": OK."
 					else:
@@ -91,7 +88,7 @@ def startLoop():
 
 	while True:
 		try:
-			sleep(60)
+			time.sleep(60)
 		except:
 			break
 
