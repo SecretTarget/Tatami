@@ -10,12 +10,12 @@ import card_interface
 import bruteforce
 
 optionsList = [
-	("-h", "Shows this help"),
-	("-v", "Verbose mode, shows the APDUs"),
-	("-r", "Enables recursive mode in the bruteforce"),
-	("-b", "Enables bruteforce mode"),
-	("-l", "Enables loop mode"),
-	("-d", "Enables dump mode (default)")
+	("-b", "choose bruteforce mode"),
+	("-d", "choose dump mode (default, specify a plugin)"),
+	("-h", "show this help"),
+	("-l", "choose loop mode (specify a plugin)"),
+	("-r", "enable recursive mode in the bruteforce mode"),
+	("-v", "verbose mode, show the APDUs")
 ]
 
 class UsageMode:
@@ -24,6 +24,7 @@ class UsageMode:
 	Loop = 2
 
 def usage():
+        print "Usage: pssi [options] [plugin]"
 	for opt, desc in sorted(optionsList):
 		print "\t%-10s%s" % (opt, desc)
 	sys.exit(2)
