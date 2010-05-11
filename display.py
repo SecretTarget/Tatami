@@ -45,3 +45,20 @@ def prettyPrint(data, tabs=""):
         else:
                 print ": "+data,
 				
+def prettyPrintToFile(data, file, tabs=""):
+        """Ecriture d'un dump sous forme lisible dans le fichier `file' (handle)."""
+	if type(data) == type(dict()):
+		for key in data["Keys"]:
+			file.write("\n")
+			if (type(key) == type("")):
+				file.write(tabs)
+				file.write(("%-27s" % key))
+				prettyPrintToFile(data[key], file, tabs+"   ")
+			else:
+				file.write(tabs)
+				file.write("====  ")
+				file.write(str(key))
+				file.write("  ====")
+				prettyPrintToFile(data[key], file, tabs)
+	else:
+		file.write(": "+str(data))

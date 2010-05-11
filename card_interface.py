@@ -4,11 +4,68 @@
 
 from smartcard.util import toHexString
 from smartcard.ATR import ATR
+from smartcard.System import readers
+from smartcard.Exceptions import NoCardException, CardConnectionException
+from smartcard.pcsc.PCSCExceptions import EstablishContextException
 
 import display
 
 # FIXME, ca devrait etre une var globale pour tous les py
 verboseMode = False
+
+
+def getReadersList():
+	try:
+		return readers()
+	except (EstablishContextException):
+		return []
+		
+		
+def connectToCard(card):
+	try:
+		card.connection = card.createConnection()
+		card.connection.connect()
+	except  (NoCardException, CardConnectionException):
+		return False
+		
+		
+def connectCard(reader):
+	try:
+		connection = reader.createConnection()
+		connection.connect()
+		return connection
+	except  (NoCardException, CardConnectionException):
+		return False
+		
+def getCard():
+	reader = selectReader()
+	if not reader:
+		return False
+	card = connectCard(reader)
+	if card == False:
+		print reader, "--> no card inserted"
+		return False
+	return card
+		
+def selectReader():
+	reader = False
+	list = getReadersList()
+	if len(list) == 0:
+		print "No reader has been found."
+	elif len(list) == 1:
+		reader = list[0]
+	else:
+		i = 1
+		for reader in list:
+			print "%u: %s" % (i, reader)
+			i+=1
+		choice = raw_input("\nWhich reader do you want to use ? ")
+		try:
+			reader = list[int(choice)-1]
+		except:
+			print "Please type a correct number"
+	return reader
+
 
 def selectFile(connection, address):
         """selectionne un fichier"""

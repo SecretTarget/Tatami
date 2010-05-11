@@ -7,15 +7,32 @@
 import sys
 import getopt
 import card_interface
+import bruteforce
 
+optionsList = [
+	("-h", "Shows this help"),
+	("-v", "Verbose mode, shows the APDUs"),
+	("-r", "Enables recursive mode in the bruteforce"),
+	("-b", "Enables bruteforce mode"),
+	("-l", "Enables loop mode"),
+	("-d", "Enables dump mode (default)")
+]
+
+class UsageMode:
+	Dumper = 0
+	Bruteforce = 1	
+	Loop = 2
 
 def usage():
-	print "usage"
+	for opt, desc in sorted(optionsList):
+		print "\t%-10s%s" % (opt, desc)
 	sys.exit(2)
 
 
 def main():
-	options = "hv"
+	options = ""
+	for opt, dec in optionsList:
+		options += opt[1:]
 	
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], options)
@@ -23,21 +40,44 @@ def main():
 		print str(err)
 		usage()
 
+	mode =UsageMode.Dumper
 	for o, a in opts:
-		if o == "-v":
-			card_interface.verboseMode = True
-		elif o == "-h":
+		if o == "-h":
 			usage()
+		elif o == "-v":
+			card_interface.verboseMode = True
+		elif o == "-r":
+			bruteforce.recursiveMode = True
+		elif o == "-b":
+			mode = UsageMode.Bruteforce
+		elif o == "-l":
+			mode = UsageMode.Loop
+		elif o == "-d":
+			mode = UsageMode.Dumper
 		else:
-			assert False, "unhandled option"
+			assert False, "unhandled option: %s" % (o)
 	
-	if len(args) < 1:
-		usage()
+	if mode == UsageMode.Dumper:
+		if len(args) < 1:
+			# TODO : Should be a different error
+			usage()
+			
+		sys.path.append(args[0])
+		import dumper
+		dumper.startDump()
 		
-	sys.path.append(args[0])
-	import dumper
-	dumper.dump()
-
+	elif mode == UsageMode.Loop:
+		if len(args) < 1:
+			# TODO : Should be a different error
+			usage()
+			
+		sys.path.append(args[0])
+		import loop
+		loop.startLoop()
+		
+	elif mode == UsageMode.Bruteforce:
+		bruteforce.startBruteforce()
+		
 
 if __name__ == '__main__':
 	main()	

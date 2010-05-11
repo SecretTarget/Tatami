@@ -9,15 +9,14 @@ from smartcard.util import toHexString
 
 
 import sys
-import structure_parser
 import display
+from  card_interface import *
 
 
 recursiveMode = False
 
 
-
-def dumpStruct(connection, startAddress = [], space = "", firstByteMin = 0,
+def explore(connection, startAddress = [], space = "", firstByteMin = 0,
                firstByteMax = 0xff, secondByteMin = 0, secondByteMax = 0xff):
 
 	for firstByte in range(firstByteMin, firstByteMax+1):
@@ -42,7 +41,7 @@ def dumpStruct(connection, startAddress = [], space = "", firstByteMin = 0,
 					elif statusCommandNotAllowed(sw1, sw2): # ie. c'est un DF
 						print "This is a DF\n"
 						if recursiveMode:
-							dumpStruct(connection, startAddress+address, space+"   ")
+							explore(connection, startAddress+address, space+"   ")
 					elif statusRecordNotFound(sw1, sw2):
 						# Record not found, it was the last one
 						print "Total: %u record(s)\n" % (recordNumber)
@@ -58,22 +57,11 @@ def dumpStruct(connection, startAddress = [], space = "", firstByteMin = 0,
 					break
 
 
-def launchBF():
-    for reader in readers():
-        try:
-            connection = reader.createConnection()
-            connection.connect()
-        except  (NoCardException, CardConnectionException):
-            print reader, '--> no card inserted'
-            break
-
-	atr = parseATR(connection)
-	prettyPrint(atr)
-        print "\n"
-#        dumpStruct(connection)
-
-	dumpStruct(connection, [], "", 0x00, 0x3f, 0x00, 0x80)
-#        dumpStruct(connection, [0x00, 0x00], "", 0x00, 0x00, 0x00, 0x70)
-#        dumpStruct(connection, [0x10, 0x00], "", 0x10, 0x11, 0x00, 0x70)
-#        dumpStruct(connection, [0x20, 0x00], "", 0x20, 0x21, 0x00, 0x70)
-#        dumpStruct(connection, [0x30, 0x00], "", 0x30, 0x31, 0x00, 0x70)
+def startBruteforce():
+	card = getCard()
+	if card:
+		explore(card, [], "", 0x00, 0x3f, 0x00, 0x80)
+	#        dumpStruct(connection, [0x00, 0x00], "", 0x00, 0x00, 0x00, 0x70)
+	#        dumpStruct(connection, [0x10, 0x00], "", 0x10, 0x11, 0x00, 0x70)
+	#        dumpStruct(connection, [0x20, 0x00], "", 0x20, 0x21, 0x00, 0x70)
+	#        dumpStruct(connection, [0x30, 0x00], "", 0x30, 0x31, 0x00, 0x70)
