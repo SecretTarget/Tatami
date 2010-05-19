@@ -42,6 +42,8 @@ def main():
         usage()
 
     mode = UsageMode.Dumper
+    
+    # TODO : Faire une option pour spécifier le CLASS BYTE en paramètre dans le cas d'un BF
     for o, a in opts:
         if o == "-h":
             usage()
@@ -58,21 +60,19 @@ def main():
         else:
             assert False, "unhandled option: %s" % (o)
 
-    if mode == UsageMode.Dumper:
-        if len(args) < 1:
-            # TODO : Should be a different error
-            usage()
+    if len(args) < 1:
+        # TODO : Should be a different error
+        usage()
+        
+    sys.path.append(args[0])
+    import plugin
+    card_interface.cla = plugin.getClassByte()
 
-        sys.path.append(args[0])
+    if mode == UsageMode.Dumper:
         import dumper
         dumper.startDump()
 
     elif mode == UsageMode.Loop:
-        if len(args) < 1:
-            # TODO : Should be a different error
-            usage()
-
-        sys.path.append(args[0])
         import loop
         loop.startLoop()
 

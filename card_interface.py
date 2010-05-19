@@ -12,6 +12,7 @@ import display
 
 # FIXME, ca devrait etre une var globale pour tous les py
 verboseMode = False
+cla = 0
 
 
 def getReadersList():
@@ -70,7 +71,7 @@ def selectReader():
 
 def selectFile(connection, address):
         """selectionne un fichier"""
-        cla = 0x94
+        global cla
         ins = 0xa4
         param1, param2 = 0x08, 0x00
         addressLen = len(address)
@@ -81,7 +82,7 @@ def selectFile(connection, address):
 
 def readRecord(connection, number, length=29):
         """Lit un enregistrement dans un fichier selectionné."""
-        cla = 0x94
+        global cla
         ins = 0xb2
         mode = 0x04
         apdu = [cla, ins, number, mode, length]
