@@ -22,10 +22,33 @@ def getReadersList():
         return []
         
         
+def sendAPDU(connection, apdu):
+    response, sw1, sw2 = connection.transmit(apdu)
+    if verboseMode: display.printExchange(apdu, response, sw1, sw2)
+    return response, sw1, sw2
+        
+        
+def warmResetNeeded(connection):
+    testAPDU = [0,0,0,0]
+    response, sw1, sw2 = sendAPDU(connection, testAPDU)
+    if sw1 == 0x6e:
+        return True
+    return False    
+        
+        
+def establishConnection(connection):
+    # disposition = 1 = SCARD_RESET_CARD (warm reset)
+    connection.connect(disposition=1)
+    if warmResetNeeded(connection):
+        connection.disconnect()
+        connection.connect()
+        
+        
 def connectToCard(card):
     try:
         card.connection = card.createConnection()
-        card.connection.connect()
+        #card.connection.connect()
+        establishConnection(connection)
         return True
     except  (NoCardException, CardConnectionException):
         return False
@@ -34,7 +57,8 @@ def connectToCard(card):
 def connectCard(reader):
     try:
         connection = reader.createConnection()
-        connection.connect()
+        #connection.connect()
+        establishConnection(connection)
         return connection
     except  (NoCardException, CardConnectionException):
         return False
@@ -69,25 +93,34 @@ def selectReader():
     return reader
 
 
-def selectFile(connection, address):
+def selectFileByName(connection, name):
+    hexName = []
+    for c in name:
+        hexName.append(ord(c))
+    return selectFile(connection, hexName, 0x04)
+
+
+def selectFile(connection, address, param1 = 0x08, param2 = 0x00):
     """selectionne un fichier"""
     global cla
     ins = 0xa4
-    param1, param2 = 0x08, 0x00
+   # param1, param2 = 0x08, 0x00
     addressLen = len(address)
     apdu = [cla, ins, param1, param2, addressLen] + address
-    response, sw1, sw2 = connection.transmit(apdu)
-    if verboseMode: display.printExchange(apdu, response, sw1, sw2)
+    response, sw1, sw2 = sendAPDU(connection, apdu)
     return response, sw1, sw2
 
 def readRecord(connection, number, length=29):
     """Lit un enregistrement dans un fichier selectionné."""
     global cla
     ins = 0xb2
-    mode = 0x04
+    #mode = 0x04
+    mode = 0x3c
     apdu = [cla, ins, number, mode, length]
-    response, sw1, sw2 = connection.transmit(apdu)
-    if verboseMode: display.printExchangeWithBinary(apdu, response, sw1, sw2)
+    response, sw1, sw2 = sendAPDU(connection, apdu)
+    if statusBadLength(sw1, sw2):
+        apdu[4] = sw2
+        response, sw1, sw2 = sendAPDU(connection, apdu)
     return response, sw1, sw2
 
 def readRecordBinaryResponse(connection, number):
@@ -113,6 +146,10 @@ def statusRecordNotFound(sw1, sw2):
 def statusCommandNotAllowed(sw1, sw2):
     """retourne True ssi la commande est interdite."""
     return (sw1==0x69 and sw2==0x86)
+    
+def statusWrongParameters(sw1, sw2):
+    """retourne True ssi les paramètres ne sont pas corrects."""
+    return (sw1==0x6a and sw2==0x86)
 
 def statusBadLength(sw1, sw2):
     """retourne True ssi on a demandé une mauvaise longueur."""
