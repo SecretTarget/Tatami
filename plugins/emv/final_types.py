@@ -12,4 +12,6 @@ class FinalType:
     Date = 0.2
     Amount = 0.3
     Integer = 0.4
+    Country = 0.5
+    Currency = 0.6
     

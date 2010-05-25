@@ -10,8 +10,8 @@ aidList = []
 structPayment = [
     ("Amount", FieldType.Final, 6, "", FinalType.Amount),
     ("CID", FieldType.Final, 1, "Cryptogram Information Data", FinalType.Integer),
-    ("Country", FieldType.Final, 2, "Country where the terminal is located", FinalType.Integer),
-    ("Currency", FieldType.Final, 2, "", FinalType.Integer),
+    ("Country", FieldType.Final, 2, "Country where the terminal is located", FinalType.Country),
+    ("Currency", FieldType.Final, 2, "", FinalType.Currency),
     ("Date", FieldType.Final, 3, "", FinalType.Date),
     ("Type", FieldType.Final, 1, "", FinalType.Integer),
 ]
