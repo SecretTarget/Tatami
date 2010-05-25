@@ -110,12 +110,12 @@ def selectFile(connection, address, param1 = 0x08, param2 = 0x00):
     response, sw1, sw2 = sendAPDU(connection, apdu)
     return response, sw1, sw2
 
-def readRecord(connection, number, length=29):
+def readRecord(connection, number, length=29, mode = 0x04):
     """Lit un enregistrement dans un fichier selectionné."""
     global cla
     ins = 0xb2
     #mode = 0x04
-    mode = 0x3c
+    #mode = 0x3c
     apdu = [cla, ins, number, mode, length]
     response, sw1, sw2 = sendAPDU(connection, apdu)
     if statusBadLength(sw1, sw2):
@@ -146,6 +146,10 @@ def statusRecordNotFound(sw1, sw2):
 def statusCommandNotAllowed(sw1, sw2):
     """retourne True ssi la commande est interdite."""
     return (sw1==0x69 and sw2==0x86)
+    
+def statusFileNotFound(sw1, sw2):
+    """retourne True ssi les un fichier n'a pas été trouvé."""
+    return (sw1==0x6a and sw2==0x82)
     
 def statusWrongParameters(sw1, sw2):
     """retourne True ssi les paramètres ne sont pas corrects."""

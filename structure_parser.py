@@ -13,16 +13,17 @@ from smartcard.ATR import ATR
 import exceptions
 
 
-MAX_RECORDS = 10
+MAX_RECORDS = 6
 
 
 class FieldType:
-    DF = 0
-    EF = 1
-    Bitmap = 2
-    Final = 3
-    Counter = 4
-    DFName = 5
+    DF = 0.1
+    EF = 0.2
+    Bitmap = 0.3
+    Final = 0.4
+    Counter = 0.5
+    DFName = 0.6
+    DFList = 0.7
 
 
 def interpretFinalField(value, type, name):
@@ -40,18 +41,43 @@ class IncorrectStructure(exceptions.Exception):
         print ": ","Tried to parse a binary string with an incorrect structure"
 
 
+class notTLVRecord(exceptions.Exception):
+    def __init__(self, data):
+        self.data = data
+        return
+
+    def __str__(self):
+        print ": ","The following record isn't in the TLV format: ", data
+
 
 def parseTLV(data):
     typeTable = plugin.getInterpretersTable()
     table = {}
     keys = []
     while len(data) > 0:
+        #print data
         type = data[0]
+        data = data[1:]
+        if type%32 == 31 and len(data)>0: #TODO : Vérifier 5 derniers bits à 1 =? multi byte tag
+            type = type*256 + data[0]
+            data = data[1:]
+        if data[0] == 0x81: # TODO : Pourquoi ?
+            data = data[1:]
+        try:
+            length = data[0]
+            #print length
+            value = data[1:1+length]
+            #print value
+            data = data[1+length:]
+            #print data
+            assert len(value)==length
+            #print data
+            #print ""
+        except: #not TLV
+            #print data
+            raise notTLVRecord(data)
         if not type in typeTable:
-            break
-        length = data[1]
-        value = data[2:2+length]
-        data = data[2+length:]
+            continue
         info = typeTable[type]
         name = info[0]
         interpreter = info[1]
@@ -64,24 +90,58 @@ def parseTLV(data):
     return table
 
 
+def findReadRecordMode(connection, begin=4):
+    for left in range(1 + ((begin-4) >> 3), 2**5):
+        mode = (left<<3) + 4
+        #print left, mode
+        data, sw1, sw2 = readRecord(connection, 1, 0, mode)
+        if not statusFileNotFound(sw1, sw2):
+            return mode
+    return -1
 
-def parseCardStruct(connection, structure, data=[], sizeParsed=[]):
+# TODO : MAJ sizeParsed ?
+def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct=[]):
     table = {}
     keys = []
     total = 0
     while (structure != []):
-    
+        #print structure
+        #print table
+        #print ""
     
         # TODO : maj total
         if structure == -1: #TLV !
-            for number in range(1, MAX_RECORDS):
-                data, sw1, sw2 = readRecord(connection, number)
-                if len(data)>0:
-                    table[number] = parseTLV(data)
-                    keys.append(number)
-            table["Keys"] = keys
-            return table                
-
+            # TODO : Le faire sans bruteforce
+            structure = []
+            mode = findReadRecordMode(connection)
+            fileCounter = 0
+            while mode != -1:
+                entry = {}
+                subkeys = []
+                for number in range(1, MAX_RECORDS):
+                    data, sw1, sw2 = readRecord(connection, number, 0, mode)
+                    if len(data)>0:
+                        try:
+                            entry[number] = parseTLV(data)
+                        except notTLVRecord:
+                            ''''
+                            interpretersTable = plugin.getInterpretersTable()
+                            if "default" in plugin.getInterpretersTable():
+                                entry[number] = interpretersTable["default"](data)
+                            else:
+                                entry[number] = "No interpreter found for this NOT TLV field"
+                            '''
+                            # TODO : if defaultStruct !- [] ?
+                            entry[number] = parseCardStruct(connection, defaultStruct, data, sizeParsed, defaultStruct)
+                        subkeys.append(number)
+                    else:
+                        break
+                mode = findReadRecordMode(connection, mode)
+                fileCounter += 1
+                entry["Keys"] = subkeys
+                keys.append(fileCounter)
+                table[fileCounter] = entry
+       
 
 
         else:
@@ -111,10 +171,29 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[]):
             else:
                 if field[1] == FieldType.DF:
                     entry = parseCardStruct(connection, field[3], data+field[2])
+                    
+                    
+                    
                 elif field[1] == FieldType.DFName:
                     # TODO : Check error
                     selectFileByName(connection, field[2])
                     entry = parseCardStruct(connection, field[3],[])
+                elif field[1] == FieldType.DFList:
+                    entry = {}
+                    subkeys = []
+                    for addr in field[2]:
+                        selectFile(connection, addr, 0x04)
+                        addr= toHexString(addr)
+                        subkeys.append(addr)
+                        # TODO : le faire dans les autres cas, style DFName
+                        if len(field)>4:
+                            defaultStruct = field[4]
+                        entry[addr] = parseCardStruct(connection, field[3], [], sizeParsed, defaultStruct)
+                    entry["Keys"] = subkeys
+
+                    
+                    
+                    
                 elif field[1] == FieldType.EF:
                     (response, sw1, sw2) = selectFile(connection, data+field[2])
                     if not statusIsOK(sw1, sw2):
@@ -140,6 +219,8 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[]):
                                 else:
                                     entry[number] = parseCardStruct(connection, field[3], bindata)
                                 subkeys.append(number)
+                            else:
+                                break
 
                         if hiddenFields:
                             for i in range(len(name)):
@@ -170,7 +251,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[]):
                         data = []
                         total += len(value)
                     interpretation = interpretFinalField(value, field[4], name)
-                    entry = ("%-35s" % interpretation)+" ---   "+value+" ("+field[3]+")"
+                    entry = ("%-35s" % interpretation)+" ---   "+str(value)+" ("+field[3]+")"
 
                 if hiddenFields:
                     counter = 0
@@ -181,9 +262,10 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[]):
                 else:
                     table[name] = entry
                     keys.append(name)
-
+                    
     sizeParsed.append(total)
     table["Keys"] = keys
+    #print table
     return table
 
 

@@ -41,7 +41,7 @@ def prettyPrint(data, tabs=""):
                 prettyPrint(data[key], tabs+"   ")
             else:
                 print tabs, "====  ", key, "  ====",
-                prettyPrint(data[key], tabs)
+                prettyPrint(data[key], tabs+"   ")
     else:
         print ": "+data,
                 
