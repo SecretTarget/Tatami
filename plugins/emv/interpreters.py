@@ -31,37 +31,44 @@ def interpretString(value):
     for c in value:
         txt += chr(c)
     return txt
-    
-    
+
+
 def interpretAID(value):
     structures.aidList.append(value)
     return interpretUnknown(value)
 
 
 def interpretDate(value):
-    return "%02u / %02u / %02u" % (hexAsInt(value[2]), hexAsInt(value[1]), hexAsInt(value[0]))
-    
-    
+    try:
+        return "%02u / %02u / %02u" % (hexAsInt(value[2]), hexAsInt(value[1]),
+                                       hexAsInt(value[0]))
+    except:
+        return value
+
+
 def interpretAmount(value):
-    amount = hexListAsInt(value[0:5])
-    cents = hexAsInt(value[5])
-    return "%u.%02u" % (amount, cents)
-    
-    
+    try:
+        amount = hexListAsInt(value[0:5])
+        cents = hexAsInt(value[5])
+        return "%u.%02u" % (amount, cents)
+    except:
+        return value
+
+
 def interpretCountry(value):
     code = hexListAsInt(value)
-    return countryCodes[code]
-    
-    
+    return matchWithIntCode(countryCodes, code)
+
+
 def interpretCurrency(value):
     code = hexListAsInt(value)
-    return currencyCodes[code]
-    
-   
+    return matchWithIntCode(currencyCodes, code)
+
+
 def interpretUnknown(value):
     return interpretHexString(value)
-    
-    
+
+
 def interpretHexString(value):
     txt = ""
     for c in value:
@@ -85,13 +92,13 @@ interpretingFunctions = {
     0x90:   ("Issuer certificate", interpretHexString),
     0x92:   ("Issuer remainder", interpretInteger),
     0x93:   ("Signed static application data", interpretHexString),
-    
+
     0x5f20: ("Cardholder", interpretString),
     0x5f24: ("Validity end", interpretDate),
     0x5f25: ("Validity beginning", interpretDate),
     0x5f28: ("Country", interpretCountry),
     0x5f34: ("PAN sequence number", interpretInteger),
-    
+
     0x9f07:   ("Application usage control", interpretHexString),
     0x9f08:   ("Application version number", interpretInteger),
     0x9f0d:   ("Issuer default action code", interpretHexString),
@@ -103,7 +110,7 @@ interpretingFunctions = {
     0x9f47:   ("Card exponent", interpretInteger),
     0x9f48:   ("Card remainder", interpretInteger),
     0x9f4a:   ("Static data authentication tag list", interpretInteger),
-    
+
     FinalType.Date: interpretDate,
     FinalType.Amount: interpretAmount,
     FinalType.Integer: interpretInteger,
@@ -111,4 +118,15 @@ interpretingFunctions = {
     FinalType.Currency: interpretCurrency,
 
     FinalType.Unknown: interpretUnknown,
-}
+    }
+
+# FIXME: devrait etre general ?
+def matchWithIntCode(codes, code):
+    """Renvoie la valeur associée à un code.
+    `codes' est un dictionnaire, les clés sont les codes entiers,
+    `value' est une clé potentielle en binaire."""
+    if code in codes:
+        res = codes[code]
+    else:
+        res = "Inconnu"
+    return res
