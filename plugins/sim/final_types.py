@@ -12,4 +12,7 @@ class FieldType:
 class FinalType:
     Unknown = 0.1
     HexString = 0.2
-    
+    Integer = 0.3
+    MCC = 0.4
+    RevHexString = 0.5
+    MNC = 0.6
