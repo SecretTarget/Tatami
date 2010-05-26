@@ -7,6 +7,7 @@ class FieldType:
     DFName = 0.6
     DFList = 0.7
     TransparentEF = 0.8
+    Repeated = 0.9
 
 class FinalType:
     Unknown = 0.1

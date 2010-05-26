@@ -11,8 +11,18 @@ structICC = [
 ]
 
 
+structLP = [
+    ("Language code", FieldType.Repeated, 1, "", FinalType.HexString)
+]
+
+
+structGSM = [
+    ("Language preference", FieldType.TransparentEF, [0x6f, 0x05], structLP),
+]
+
+
 structSIM = [
-    ("ICC Identification", FieldType.TransparentEF, [0x2f, 0xe2], structICC),
+    ("ICC identification", FieldType.TransparentEF, [0x2f, 0xe2], structICC),
 #    ("DF Télécom", FieldType.DF, [0x7f, 0x10], structDFTel),
-#   ("DF GSM", FieldType.DF, [0x7f, 0x20], structDFGSM)
+   ("DF GSM", FieldType.DF, [0x7f, 0x20], structGSM)
 ]

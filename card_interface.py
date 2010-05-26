@@ -120,7 +120,7 @@ def selectFile(connection, address, param1 = 0x08, param2 = 0x00):
     return response, sw1, sw2
     
     
-def readBinaryData(connection, size):
+def readData(connection, size):
     global cla
     apdu = [cla, 0xb0, 0, 0, size]
     return sendAPDU(connection, apdu)
