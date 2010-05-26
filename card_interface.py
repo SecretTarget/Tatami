@@ -95,6 +95,13 @@ def selectReader():
     return reader
 
 
+def findTransparentEFSize(connection, infoSize):
+    global cla
+    apdu = [cla, 0xc0, 0, 0, infoSize]
+    response, sw1, sw2 = sendAPDU(connection, apdu)
+    return response[3]
+
+
 def selectFileByName(connection, name):
     hexName = []
     for c in name:
@@ -111,6 +118,13 @@ def selectFile(connection, address, param1 = 0x08, param2 = 0x00):
     apdu = [cla, ins, param1, param2, addressLen] + address
     response, sw1, sw2 = sendAPDU(connection, apdu)
     return response, sw1, sw2
+    
+    
+def readBinaryData(connection, size):
+    global cla
+    apdu = [cla, 0xb0, 0, 0, size]
+    return sendAPDU(connection, apdu)
+    
 
 def readRecord(connection, number, length=29, mode = 0x04):
     """Lit un enregistrement dans un fichier selectionné."""
@@ -158,5 +172,5 @@ def statusWrongParameters(sw1, sw2):
     return (sw1==0x6a and sw2==0x86)
 
 def statusBadLength(sw1, sw2):
-    """retourne True ssi on a demandé une mauvaise longueur."""
+    """retourne True ssi on a demandé une mauvaise longueur de record."""
     return sw1 == 0x6c

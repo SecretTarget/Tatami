@@ -24,6 +24,7 @@ class FieldType:
     Counter = 0.5
     DFName = 0.6
     DFList = 0.7
+    TransparentEF = 0.8
 
 
 def interpretFinalField(value, type, name):
@@ -193,8 +194,15 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                     entry["Keys"] = subkeys
 
                     
+                elif field[1] == FieldType.TransparentEF:
+                    (response, sw1, sw2) = selectFile(connection, data+field[2])
+                    # TODO : code d'erreur ?
+                    size = findTransparentEFSize(connection, sw2)
+                    data, sw1, sw2 = readBinaryData(connection, size)
+                    entry = parseCardStruct(connection, field[3], data)
                     
                     
+                # TODO : Quand est-on en binaire ou en hexa ?
                 elif field[1] == FieldType.EF:
                     (response, sw1, sw2) = selectFile(connection, data+field[2])
                     if not statusIsOK(sw1, sw2):
