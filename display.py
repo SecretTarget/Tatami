@@ -13,7 +13,11 @@ def toBinaryString(tab):
 # FIXME: nom pourri
 def printExchange(query, response, sw1, sw2):
     """Affiche un échange query-response."""
-    print ">> ", toHexString(query)
+    print ">> ",
+    if type(query) == type([]):
+         print toHexString(query)
+    else:
+        print query
     print "<< ", toHexString(response), " / ", "%x %x" % (sw1, sw2)
 
 def printExchangeWithBinary(query, response, sw1, sw2):

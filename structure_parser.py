@@ -13,7 +13,7 @@ from smartcard.ATR import ATR
 import exceptions
 
 
-MAX_RECORDS = 6
+MAX_RECORDS = 1000
 
 
 class FieldType:

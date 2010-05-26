@@ -29,7 +29,8 @@ def sendAPDU(connection, apdu):
         
         
 def warmResetNeeded(connection):
-    testAPDU = [0,0,0,0]
+    global cla
+    testAPDU = [cla,0,0,0]
     response, sw1, sw2 = sendAPDU(connection, testAPDU)
     if sw1 == 0x6e:
         return True
@@ -42,6 +43,7 @@ def establishConnection(connection):
     if warmResetNeeded(connection):
         connection.disconnect()
         connection.connect()
+        if verboseMode: display.printExchange("reset", getATR(connection), 0x90, 0)
         
         
 def connectToCard(card):
