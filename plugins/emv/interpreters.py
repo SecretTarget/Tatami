@@ -50,12 +50,18 @@ def interpretAmount(value):
     
 def interpretCountry(value):
     code = hexListAsInt(value)
-    return countryCodes[code]
+    if code in countryCodes:
+        return countryCodes[code]
+    else:
+        return "Unknown country code"
     
     
 def interpretCurrency(value):
     code = hexListAsInt(value)
-    return currencyCodes[code]
+    if code in currencyCodes:
+        return currencyCodes[code]
+    else:
+        return "Unknown currency code"
     
    
 def interpretUnknown(value):
