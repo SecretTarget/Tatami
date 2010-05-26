@@ -55,13 +55,14 @@ def parseTLV(data):
     table = {}
     keys = []
     while len(data) > 0:
-        #print data
+#        print data
         type = data[0]
         data = data[1:]
         if type%32 == 31 and len(data)>0: #TODO : Vérifier 5 derniers bits à 1 =? multi byte tag
             type = type*256 + data[0]
             data = data[1:]
-        if data[0] == 0x81: # TODO : Pourquoi ?
+            
+        if data[0] == 0x81 and len(data)>0: # TODO : Pourquoi ?
             data = data[1:]
         try:
             length = data[0]
