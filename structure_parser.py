@@ -234,9 +234,13 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                 elif field[1] == FieldType.TransparentEF:
                     (response, sw1, sw2) = selectFile(connection, data+field[2])
                     # TODO : code d'erreur ?
-                    size = findTransparentEFSize(connection, sw2)
-                    hexdata, sw1, sw2 = readData(connection, size)
-                    entry = parseCardStruct(connection, field[3], hexdata)
+                    try:
+                        size = findTransparentEFSize(connection, sw2)
+                    except:
+                        entry = "File not found"
+                    else:
+                        hexdata, sw1, sw2 = readData(connection, size)
+                        entry = parseCardStruct(connection, field[3], hexdata)
                     
                     
                 # TODO : Quand est-on en binaire ou en hexa ?
