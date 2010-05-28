@@ -261,6 +261,15 @@ def parseATR(atrStruct):
     return atr
 
 
+def hexListToBinaryString(tab):
+    """retourne la chaine de la representation binaire de tab"""
+    #print "Format", tab
+    s = ''
+    blen = len(tab) * 8
+    for b in range(0,blen):
+        s = s + "%d" % (((tab[b/8] >> ((7-b)%8))) & 1)
+    return s
+
 
 interpretingFunctions = {
     FinalType.Date: interpretDate,
@@ -286,4 +295,5 @@ interpretingFunctions = {
         
     "ANY": updateGlobalFields,
     "ATR": parseATR,
+    "FORMAT": hexListToBinaryString,
     }

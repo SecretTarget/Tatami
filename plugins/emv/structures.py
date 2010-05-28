@@ -13,7 +13,7 @@ structPayment = [
     ("Country", FieldType.Final, 2, "Country where the terminal is located", FinalType.Country),
     ("Currency", FieldType.Final, 2, "", FinalType.Currency),
     ("Date", FieldType.Final, 3, "", FinalType.Date),
-    ("Type", FieldType.Final, 1, "", FinalType.Integer),
+    ("Type", FieldType.Final, 1, "", FinalType.TransactionType),
 ]
 
 structEMV = [

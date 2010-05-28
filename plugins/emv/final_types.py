@@ -14,4 +14,5 @@ class FinalType:
     Integer = 0.4
     Country = 0.5
     Currency = 0.6
+    TransactionType = 0.7
     

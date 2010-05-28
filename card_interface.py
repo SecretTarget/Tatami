@@ -139,9 +139,12 @@ def readRecord(connection, number, length=29, mode = 0x04):
         response, sw1, sw2 = sendAPDU(connection, apdu)
     return response, sw1, sw2
 
+'''
 def readRecordBinaryResponse(connection, number):
     response, sw1, sw2 = readRecord(connection, number)
     return display.toBinaryString(response)
+'''
+
 
 def getATR(connection):
     return connection.getATR()

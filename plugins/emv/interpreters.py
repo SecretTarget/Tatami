@@ -57,12 +57,12 @@ def interpretAmount(value):
 
 def interpretCountry(value):
     code = hexListAsInt(value)
-    return matchWithIntCode(countryCodes, code)
+    return matchWithCode(countryCodes, code)
 
 
 def interpretCurrency(value):
     code = hexListAsInt(value)
-    return matchWithIntCode(currencyCodes, code)
+    return matchWithCode(currencyCodes, code)
 
 
 def interpretUnknown(value):
@@ -74,6 +74,17 @@ def interpretHexString(value):
     for c in value:
         txt += "%02x " % c
     return txt
+    
+    
+transactionTypes = {
+    0:  "Payment",
+    1:  "Withdrawal",
+}
+    
+    
+def interpretTransactionType(value):
+    code = value[0]
+    return matchWithCode(transactionTypes, code)
 
 
 interpretingFunctions = {
@@ -116,12 +127,13 @@ interpretingFunctions = {
     FinalType.Integer: interpretInteger,
     FinalType.Country: interpretCountry,
     FinalType.Currency: interpretCurrency,
+    FinalType.TransactionType: interpretTransactionType,
 
     FinalType.Unknown: interpretUnknown,
     }
 
 # FIXME: devrait etre general ?
-def matchWithIntCode(codes, code):
+def matchWithCode(codes, code):
     """Renvoie la valeur associée à un code.
     `codes' est un dictionnaire, les clés sont les codes entiers,
     `value' est une clé potentielle en binaire."""

@@ -2,13 +2,17 @@
 
 from smartcard.util import toHexString
 
-def toBinaryString(tab):
+
+# TODO : également dans les interpréteurs ?
+# TODO : Faire des fonctions dispo aux interpréteurs, du genre matchWithCode
+def hexListToBinaryString(tab):
     """retourne la chaine de la representation binaire de tab"""
     s = ''
     blen = len(tab) * 8
     for b in range(0,blen):
         s = s + "%d" % (((tab[b/8] >> ((7-b)%8))) & 1)
     return s
+
 
 # FIXME: nom pourri
 def printExchange(query, response, sw1, sw2):

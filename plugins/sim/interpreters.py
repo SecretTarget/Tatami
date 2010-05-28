@@ -35,11 +35,19 @@ def interpretInteger(value):
     return str(n)
     
     
-def interpretMCC(value):
+def interpretIMSIMCC(value):
     global mcc
     code = (value[0]>>4)
     code = 10*code + value[1]%16
     code = 10*code + (value[1]>>4)
+    mcc = code
+    return matchWithIntCode(MCCs, code)
+    
+    
+def interpretPLMNMCC(value):
+    global mcc
+    code = interpretRevHexString(value)
+    code = int(code[0:3])
     mcc = code
     return matchWithIntCode(MCCs, code)
     
@@ -54,7 +62,8 @@ interpretingFunctions = {
     FinalType.RevHexString: interpretRevHexString,
     FinalType.HexString: interpretHexString,
     FinalType.Integer: interpretInteger,
-    FinalType.MCC: interpretMCC,
+    FinalType.IMSIMCC: interpretIMSIMCC,
+    FinalType.PLMNMCC: interpretPLMNMCC,
     FinalType.MNC: interpretMNC,
 
     FinalType.Unknown: interpretUnknown,
