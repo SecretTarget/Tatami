@@ -7,7 +7,7 @@ from codes import MCCs, MNCs
 
 # TODO : rendre les interpréteurs SAFE    
 
-mcc = 0
+mncBase = ""
 
    
 def interpretUnknown(value):
@@ -24,7 +24,7 @@ def interpretHexString(value):
 def interpretRevHexString(value):
     txt = ""
     for c in value:
-        txt += "%1u%1u" % (c%16, c>>4)
+        txt += "%1x%1x" % (c%16, c>>4)
     return txt
 
 
@@ -36,25 +36,28 @@ def interpretInteger(value):
     
     
 def interpretIMSIMCC(value):
-    global mcc
+    global mncBase
     code = (value[0]>>4)
     code = 10*code + value[1]%16
     code = 10*code + (value[1]>>4)
-    mcc = code
+    mncBase = str(code)+'-'
+    # TODO : Ça se passe comment si le MNC est à 3 chiffres ?
     return matchWithIntCode(MCCs, code)
     
     
 def interpretPLMNMCC(value):
-    global mcc
+    global mncBase
     code = interpretRevHexString(value)
+    mncBase = code[0:3]+'-'
+    if code[3] != 'f': # Le MNC est à 3 chiffres
+        mncBase += code[3]
     code = int(code[0:3])
-    mcc = code
     return matchWithIntCode(MCCs, code)
     
     
 def interpretMNC(value):
-    global mcc
-    code = str(mcc)+'-'+interpretRevHexString(value)
+    global mncBase
+    code = mncBase + interpretRevHexString(value)
     return matchWithIntCode(MNCs, code)
 
 
