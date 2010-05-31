@@ -18,3 +18,5 @@ class FinalType:
     RevHexString = 0.5
     MNC = 0.6
     PLMNMCC = 0.7
+    DisplayCondition = 0.8
+    String = 0.9

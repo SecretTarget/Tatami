@@ -61,6 +61,22 @@ def interpretMNC(value):
     return matchWithIntCode(MNCs, code)
 
 
+def interpretDisplayCondition(value):
+    bit = value[0] % 2
+    base = "display of registered PLMN "
+    if bit == 1:
+        return base + "REQUIRED"
+    return base + "NOT REQUIRED"
+    
+def interpretString(value):
+    txt = ""
+    for c in value:
+        if c == 0xff:
+            break
+        txt += chr(c)
+    return txt
+
+
 interpretingFunctions = {
     FinalType.RevHexString: interpretRevHexString,
     FinalType.HexString: interpretHexString,
@@ -68,7 +84,9 @@ interpretingFunctions = {
     FinalType.IMSIMCC: interpretIMSIMCC,
     FinalType.PLMNMCC: interpretPLMNMCC,
     FinalType.MNC: interpretMNC,
-
+    FinalType.DisplayCondition: interpretDisplayCondition,
+    FinalType.String: interpretString,
+    
     FinalType.Unknown: interpretUnknown,
 }
 

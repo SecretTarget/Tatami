@@ -59,6 +59,15 @@ structGID = [
     ("GID", FieldType.FinalRepeated, 1, "Group Identifier", FinalType.Integer),
 ]
 
+structSPN = [
+    ("Display condition", FieldType.Final, 1, "", FinalType.DisplayCondition),
+    ("SPN", FieldType.Final, 16, "Service Provider Name", FinalType.String),
+]
+
+structPUCT = [
+    ("Cuurency code", FieldType.Final, 3, "", FinalType.Integer),
+    ("PPU", FieldType.Final, 2, "Price per unit", FinalType.Integer),
+]
 
 structGSM = [
     ("Language preference", FieldType.TransparentEF, [0x6f, 0x05], structLP),
@@ -66,11 +75,13 @@ structGSM = [
     ("Kc", FieldType.TransparentEF, [0x6f, 0x20], structKc),
     ("PLMN selector", FieldType.TransparentEF, [0x6f, 0x30], structPLMNsel),
     ("HPLMN search period", FieldType.TransparentEF, [0x6f, 0x31], structHPLMN),
-    ("ACM max", FieldType.TransparentEF, [0x6f, 0x37], structACMmax),
+    ("ACM max", FieldType.TransparentEF, [0x6f, 0x37], structACMmax), # TODO : a tester, je ne l'ai pas
     # TODO : EFsst = sim service table
-    ("ACM", FieldType.TransparentEF, [0x6f, 0x39], structACM),
+    ("ACM", FieldType.TransparentEF, [0x6f, 0x39], structACM),  # TODO : a tester, je ne l'ai pas
     ("Group Identifier level 1", FieldType.TransparentEF, [0x6f, 0x3e], structGID),
     ("Group Identifier level 2", FieldType.TransparentEF, [0x6f, 0x3f], structGID),
+    ("SPN", FieldType.TransparentEF, [0x6f, 0x46], structSPN),
+    ("PUCT", FieldType.TransparentEF, [0x6f, 0x41], structPUCT), # TODO : Pas la bonne structure, je ne l'ai pas sur mon tel
 ]
 
 
