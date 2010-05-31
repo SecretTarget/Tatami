@@ -9,6 +9,7 @@ class FieldType:
     TransparentEF = 0.8
     FinalRepeated = 0.9
     StructRepeated = 0.01
+    ReversedStructRepeated = 0.02
 
 class FinalType:
     Unknown = 0.1
@@ -20,3 +21,7 @@ class FinalType:
     PLMNMCC = 0.7
     DisplayCondition = 0.8
     String = 0.9
+    BinaryString = 0.01
+    LocationUpdateStatus = 0.02
+    OperationMode = 0.03
+    Phase = 0.04

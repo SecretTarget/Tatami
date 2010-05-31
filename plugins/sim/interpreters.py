@@ -17,7 +17,7 @@ def interpretUnknown(value):
 def interpretHexString(value):
     txt = ""
     for c in value:
-        txt += "%02x " % c
+        txt += "%02x" % c
     return txt
     
     
@@ -75,6 +75,54 @@ def interpretString(value):
             break
         txt += chr(c)
     return txt
+    
+    
+def interpretBinaryString(value):
+    txt = ''
+    blen = len(value) * 8
+    for b in range(0,blen):
+        txt = txt + "%d" % (((value[b/8] >> ((7-b)%8))) & 1)
+    return txt
+
+
+
+
+locationUpdateStatuses = {
+    0:  "updated",
+    1:  "not updated",
+    2:  "PLMN not allowed",
+    3:  "Location Area not allowed",
+    7:  "reserved"
+}
+
+def interpretLocationUpdateStatus(value):
+    code = value[0]%8
+    return matchWithIntCode(locationUpdateStatuses, code)
+    
+    
+    
+operationModes = {
+    0x00:   "Normal operation",
+    0x80:   "Type approval operations",
+    0x01:   "Normal operation + specific facilities",
+    0x81:   "Type approval operations + specific facilities",
+    0x02:   "Maintenance (off line)",
+    0x04:   "Cell test operation"
+}    
+    
+def interpretOperationMode(value):
+    return matchWithIntCode(operationModes, value[0])
+ 
+    
+    
+phaseValues = {
+    0x00:   "Phase 1",
+    0x02:   "Phase 2",
+}    
+    
+def interpretPhase(value):
+    return matchWithIntCode(phaseValues, value[0])
+        
 
 
 interpretingFunctions = {
@@ -86,6 +134,10 @@ interpretingFunctions = {
     FinalType.MNC: interpretMNC,
     FinalType.DisplayCondition: interpretDisplayCondition,
     FinalType.String: interpretString,
+    FinalType.BinaryString: interpretBinaryString,
+    FinalType.LocationUpdateStatus: interpretLocationUpdateStatus,
+    FinalType.OperationMode: interpretOperationMode,
+    FinalType.Phase: interpretPhase,
     
     FinalType.Unknown: interpretUnknown,
 }
@@ -98,6 +150,6 @@ def matchWithIntCode(codes, code):
     if code in codes:
         res = codes[code]
     else:
-        res = "Inconnu"
+        res = "Inconnu --> %s" % (code)
     return res
 

@@ -27,6 +27,7 @@ class FieldType:
     TransparentEF = 0.8
     FinalRepeated = 0.9
     StructRepeated = 0.01
+    ReversedStructRepeated = 0.02
 
 
 def interpretFinalField(value, type, name):
@@ -192,10 +193,11 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                 structure = subfields + structure
                 
             elif field[1] == FieldType.StructRepeated:
+                #print data
                 length = field[2]
                 datalen = len(data)
                 number = 0
-                for i in range(0, datalen/length):
+                for i in range(datalen/length):
                     #print i,number, length
                     #print toHexString(data[i*number: i*number+length])
                     if data[i*length: (i+1)*length] == [0xff]*length:    # TODO : faire avec des strings
@@ -205,6 +207,17 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                 data = [number] + data
                 structure = field + structure
                 #print structure
+               
+            # TODO : regrouper avec le cas précédent ? faire un reverse d'autres cas ?
+            elif field[1] == FieldType.ReversedStructRepeated:
+                length = field[2]
+                datalen = len(data)
+                newdata = []
+                for i in reversed(range(datalen/length)):
+                    newdata += data[i*length: (i+1)*length]
+                data = newdata
+                #print data, newdata
+                structure = [(field[0], FieldType.StructRepeated, field[2], field[3])] + structure
                 
                 
             else:

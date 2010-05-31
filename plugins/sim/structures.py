@@ -69,6 +69,41 @@ structPUCT = [
     ("PPU", FieldType.Final, 2, "Price per unit", FinalType.Integer),
 ]
 
+structCBMI = [
+    ("CBMI", FieldType.FinalRepeated, 2, "Cell Broadcast Message Identifier", FinalType.HexString),
+]
+
+structBCCH = [
+    ("BCCH information", FieldType.Final, 16, "Broadcast Control CHannel", FinalType.HexString),
+]
+
+structACC = [
+    ("Access control classes", FieldType.Final, 2, "", FinalType.BinaryString),
+]
+
+structForbiddenPLMN = [
+    ("Forbidden PLMN (Public Land Mobile Network) list", FieldType.ReversedStructRepeated, 3, structPLMN)
+]
+
+structLOCI = [
+    ("TMSI", FieldType.Final, 4, "Temporary Mobile Subscriber Identity", FinalType.HexString),
+    #("LAI", FieldType.Final, 5, "Location Area Information", FinalType.Integer),
+    ("MCC", FieldType.Final, 2, "Mobile Country Code", FinalType.PLMNMCC),
+    ("MNC", FieldType.Final, 1, "Mobile Network Code", FinalType.MNC),
+    ("LAC", FieldType.Final, 2, "", FinalType.HexString),   # TODO : C'est quoi ?
+    ("TMSI time", FieldType.Final, 1, "Current value of Periodic Location Updating Timer", FinalType.Integer),
+    ("Location update status", FieldType.Final, 1, "", FinalType.LocationUpdateStatus),
+]
+
+structAD = [
+    ("MS operation mode", FieldType.Final, 1, "", FinalType.OperationMode),
+    # TODO : Incomplet ? Le reste des valeurs est manufacturer specific...
+]
+
+structPhase = [
+    ("SIM Phase", FieldType.Final, 1, "", FinalType.Phase),
+]
+
 structGSM = [
     ("Language preference", FieldType.TransparentEF, [0x6f, 0x05], structLP),
     ("IMSI", FieldType.TransparentEF, [0x6f, 0x07], structIMSI),
@@ -82,6 +117,13 @@ structGSM = [
     ("Group Identifier level 2", FieldType.TransparentEF, [0x6f, 0x3f], structGID),
     ("SPN", FieldType.TransparentEF, [0x6f, 0x46], structSPN),
     ("PUCT", FieldType.TransparentEF, [0x6f, 0x41], structPUCT), # TODO : Pas la bonne structure, je ne l'ai pas sur mon tel
+    ("CBMI", FieldType.TransparentEF, [0x6f, 0x45], structCBMI),
+    ("BCCH", FieldType.TransparentEF, [0x6f, 0x74], structBCCH),  # TODO : page 260 de 0408_4n1.doc
+    ("ACC", FieldType.TransparentEF, [0x6f, 0x78], structACC),
+    ("FPLMN", FieldType.TransparentEF, [0x6f, 0x7b], structForbiddenPLMN),
+    ("Location information", FieldType.TransparentEF, [0x6f, 0x7e], structLOCI),
+    ("Administrative data", FieldType.TransparentEF, [0x6f, 0xad], structAD),
+    ("Phase identification", FieldType.TransparentEF, [0x6f, 0xae], structPhase),
 ]
 
 
