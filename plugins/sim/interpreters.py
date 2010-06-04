@@ -17,14 +17,22 @@ def interpretUnknown(value):
 def interpretHexString(value):
     txt = ""
     for c in value:
+        if c == 0xff:
+            break
         txt += "%02x" % c
+    if len(txt) == 0:
+        return "No information"
     return txt
     
     
 def interpretRevHexString(value):
     txt = ""
     for c in value:
+        if c == 0xff:
+                break
         txt += "%1x%1x" % (c%16, c>>4)
+    if len(txt) == 0:
+        return "No information"
     return txt
 
 
@@ -124,6 +132,44 @@ def interpretPhase(value):
     return matchWithIntCode(phaseValues, value[0])
         
 
+def interpretNumRevHexString(value):
+    txt = interpretRevHexString(value)
+    number = ""
+    for c in txt:
+        if '0' <= c <= '9':
+            number += c
+        elif c == 'A':
+            number += '*'
+        elif c == 'B':
+            number += '#'
+        elif c == 'C':
+            number += '-'
+        elif c == 'D':
+            number += '?'
+        else:
+            break
+    return number
+    
+
+def interpretTonNpi(value):
+    val = value[0]
+    npi = val % 16
+    ton = (val>>4) % 8
+    return "Number Plan Identifier: %u, Type Of Number: %u" % (npi, ton)
+
+
+SMSStatuses = {
+    0: "Free space",
+    1: "Message received and read",
+    3: "MEssage received but not read yet",
+    5: "Message sent",
+    7: "Message to be sent"    
+}
+
+def interpretSMSStatus(value):
+    code = value[0] % 8
+    return matchWithIntCode(SMSStatuses, code)
+
 
 interpretingFunctions = {
     FinalType.RevHexString: interpretRevHexString,
@@ -138,6 +184,9 @@ interpretingFunctions = {
     FinalType.LocationUpdateStatus: interpretLocationUpdateStatus,
     FinalType.OperationMode: interpretOperationMode,
     FinalType.Phase: interpretPhase,
+    FinalType.NumRevHexString: interpretNumRevHexString,
+    FinalType.TonNpi: interpretTonNpi,
+    FinalType.SMSStatus: interpretSMSStatus,
     
     FinalType.Unknown: interpretUnknown,
 }

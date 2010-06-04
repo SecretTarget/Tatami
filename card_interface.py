@@ -95,11 +95,17 @@ def selectReader():
     return reader
 
 
-def findTransparentEFSize(connection, infoSize):
+def findEFSize(connection, infoSize):
     global cla
     apdu = [cla, 0xc0, 0, 0, infoSize]
     response, sw1, sw2 = sendAPDU(connection, apdu)
-    return response[3]
+    if not statusIsOK(sw1, sw2):
+        return 0
+    if len(response)>14 and response[14] != 0:
+        return response[14]
+    elif len(response)>3 and response[3] != 0:
+        return response[3]
+    return 0
 
 
 def selectFileByName(connection, name):
@@ -117,7 +123,13 @@ def selectFile(connection, address, param1 = 0x08, param2 = 0x00):
     addressLen = len(address)
     apdu = [cla, ins, param1, param2, addressLen] + address
     response, sw1, sw2 = sendAPDU(connection, apdu)
-    return response, sw1, sw2
+    size = 0
+    if statusHasResponse(sw1, sw2):
+        size = findEFSize(connection, sw2)
+        if size != 0:
+            sw1 = 0x90
+            sw2 = 0
+    return response, sw1, sw2, size
     
     
 def readData(connection, size):
@@ -177,3 +189,7 @@ def statusWrongParameters(sw1, sw2):
 def statusBadLength(sw1, sw2):
     """retourne True ssi on a demandé une mauvaise longueur de record."""
     return sw1 == 0x6c
+    
+def statusHasResponse(sw1, sw2):
+    """retourne True ssi il y a des informations à récupérer après un select"""
+    return sw1 == 0x9f

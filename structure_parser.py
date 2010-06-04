@@ -245,11 +245,13 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
 
                     
                 elif field[1] == FieldType.TransparentEF:
-                    (response, sw1, sw2) = selectFile(connection, data+field[2])
+                    (response, sw1, sw2, size) = selectFile(connection, data+field[2])
                     # TODO : code d'erreur ?
-                    try:
-                        size = findTransparentEFSize(connection, sw2)
-                    except:
+                    #try:
+                    #    size = findTransparentEFSize(connection, sw2)
+                    #except:
+                    #    entry = "File not found"
+                    if not statusIsOK(sw1, sw2) or size == 0:
                         entry = "File not found"
                     else:
                         hexdata, sw1, sw2 = readData(connection, size)
@@ -258,7 +260,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                     
                 # TODO : Quand est-on en binaire ou en hexa ?
                 elif field[1] == FieldType.EF:
-                    (response, sw1, sw2) = selectFile(connection, data+field[2])
+                    (response, sw1, sw2, size) = selectFile(connection, data+field[2])
                     if not statusIsOK(sw1, sw2):
                         entry = "Could not select the file in order to fetch the data"
                     else:
@@ -271,8 +273,10 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                             entry = {}
                         subkeys = []
                         for number in range(1, MAX_RECORDS):
-                            cardData, sw1, sw2 = readRecord(connection, number)
+                            cardData, sw1, sw2 = readRecord(connection, number, size)
                             if len(cardData) > 0:
+                                if cardData == [0xff]*len(cardData):
+                                    continue
                                 interpreterTable = plugin.getInterpretersTable()
                                 if "FORMAT" in interpreterTable:
                                     cardData = interpreterTable["FORMAT"](cardData)

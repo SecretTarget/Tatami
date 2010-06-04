@@ -42,7 +42,7 @@ structPLMNsel = [
 ]
 
 
-# TODO : N = combien ?
+# TODO : valeur de N ?
 structHPLMN = [
     ("Home PLMN search period", FieldType.Final, 1, "Interval of time between searches for the HPLMN, in interger multiple of N minutes", FinalType.Integer),
 ]
@@ -127,8 +127,36 @@ structGSM = [
 ]
 
 
+
+
+#################################################################
+
+structNumber = [
+    ("Alpha identifier", FieldType.Final, 14, "Name of the contact", FinalType.String), # TODO : la taille dépend des cartes ?
+    ("Length of relevant information", FieldType.Final, 1, "", FinalType.Integer),
+    ("TON and NPI", FieldType.Final, 1, "", FinalType.TonNpi),
+    ("Dialling number", FieldType.Final, 10, "Telephon number of the contact", FinalType.NumRevHexString),
+    ("Capability/Configuration identifier", FieldType.Final, 1, "", FinalType.Integer),
+    ("Extension1 record identifier", FieldType.Final, 1, "", FinalType.Integer),
+]
+
+
+structSMS = [
+    ("Status", FieldType.Final, 1, "", FinalType.SMSStatus),
+    #("SMS", FieldType.Final, 175, "", FinalType.HexString),
+]
+
+structDFTel = [
+    ("Abbreviated dialling numbers", FieldType.EF, [0x6f, 0x3a], structNumber),
+    ("Fixed dialling numbers", FieldType.EF, [0x6f, 0x3b], structNumber),
+    ("SMS (Short messages)", FieldType.EF, [0x6f, 0x3c], structSMS),
+]
+
+
+#####################################################################
+
 structSIM = [
     ("ICC identification", FieldType.TransparentEF, [0x2f, 0xe2], structICC),
-#    ("DF Télécom", FieldType.DF, [0x7f, 0x10], structDFTel),
-   ("DF GSM", FieldType.DF, [0x7f, 0x20], structGSM)
+    ("DF GSM", FieldType.DF, [0x7f, 0x20], structGSM),
+    ("DF Télécom", FieldType.DF, [0x7f, 0x10], structDFTel),
 ]

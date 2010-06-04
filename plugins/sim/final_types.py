@@ -25,3 +25,6 @@ class FinalType:
     LocationUpdateStatus = 0.02
     OperationMode = 0.03
     Phase = 0.04
+    NumRevHexString = 0.05
+    TonNpi = 0.06
+    SMSStatus = 0.07
