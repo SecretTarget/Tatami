@@ -28,3 +28,8 @@ class FinalType:
     NumRevHexString = 0.05
     TonNpi = 0.06
     SMSStatus = 0.07
+    SMSInfo = 0.08
+    #NumberLength = 0.09
+    DCS = 0.001
+    TimeStamp = 0.002
+    SMS = 0.003

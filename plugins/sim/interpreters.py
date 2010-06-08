@@ -8,6 +8,8 @@ from codes import MCCs, MNCs
 # TODO : rendre les interpréteurs SAFE    
 
 mncBase = ""
+tonNPI = 0
+dcs = -1
 
    
 def interpretUnknown(value):
@@ -133,8 +135,11 @@ def interpretPhase(value):
         
 
 def interpretNumRevHexString(value):
+    global tonNPI
     txt = interpretRevHexString(value)
     number = ""
+    if tonNPI == 0x91:
+        number += '+'
     for c in txt:
         if '0' <= c <= '9':
             number += c
@@ -152,9 +157,11 @@ def interpretNumRevHexString(value):
     
 
 def interpretTonNpi(value):
+    global tonNPI
     val = value[0]
     npi = val % 16
     ton = (val>>4) % 8
+    tonNPI = val
     return "Number Plan Identifier: %u, Type Of Number: %u" % (npi, ton)
 
 
@@ -170,6 +177,134 @@ def interpretSMSStatus(value):
     code = value[0] % 8
     return matchWithIntCode(SMSStatuses, code)
 
+
+MTIs = {
+    0: "SMS‑DELIVER",	
+    2: "SMS‑STATUS‑REPORT",	
+    1: "SMS‑SUBMIT‑REPORT",
+    3: "Reserved"
+}
+
+MMSs = {
+    0: "More messages left",
+    1: "Last message"
+}
+
+RPs = {
+    0: "No reply path",
+    1: "Reply path set"
+}
+
+UDHIs = {
+    0: "No header",
+    1: "Header provided"
+}
+
+SRIs = {
+    0: "No status report",
+    1: "With status report"
+}
+
+# TODO : Lequel est le bon ? Le premier est de moi, le deuxième de SIM Reader...
+def interpretSMSInfo(value):
+    code = value[0]
+    mti = matchWithIntCode(MTIs, code % 4)
+    mms = matchWithIntCode(MMSs, (code>>2) % 2)
+    rp = matchWithIntCode(RPs, (code>>7) % 2)
+    udhi = matchWithIntCode(UDHIs, (code>>6) % 2)
+    sri = matchWithIntCode(SRIs, (code>>5) % 2)
+    return "Type: %s, %s, %s, %s, %s" % (mti, mms, rp, udhi, sri)
+
+'''
+def interpretSMSInfo(value):
+    code = value[0]
+    mti = matchWithIntCode(MTIs, (code >> 6) % 4)
+    mms = matchWithIntCode(MMSs, (code>>5) % 2)
+    rp = matchWithIntCode(RPs, (code>>2) % 2)
+    udhi = matchWithIntCode(UDHIs, (code>>3) % 2)
+    sri = matchWithIntCode(SRIs, (code>>4) % 2)
+    return "Type: %s, %s, %s, %s, %s" % (mti, mms, rp, udhi, sri)
+'''    
+'''
+def interpretNumberLength(value):
+    structures.numberLength[0] = value[0]
+    return interpretInteger(value)
+'''
+
+DCSs = {
+    0: "7-bit default alphabet",
+    1: "8-bit data",
+    2: "16-bit UCS2",
+    3: "Unknown alphabet"
+}
+
+def interpretDCS(value):
+    global dcs
+    compressed = False
+    dcs = -1
+    code = value[0]
+    if code>>6 != 0:
+        return "No valid interpretation"
+    
+    if (code>>5 % 2) == 0:
+        txt = ", Uncompressed"
+    else:
+        txt = ", Compressed"
+        compressed = True
+    
+    newDCS = (code>>2) % 4
+    if not compressed:
+        dcs = newDCS
+    return matchWithIntCode(DCSs, newDCS)+txt
+    
+    
+# TODO : ordre d'affichage des infos ?
+def interpretTimeStamp(value):
+    year = interpretRevHexString(value[0:1])
+    month = interpretRevHexString(value[1:2])
+    day = interpretRevHexString(value[2:3])
+    hour = interpretRevHexString(value[3:4])
+    minute = interpretRevHexString(value[4:5])
+    second = interpretRevHexString(value[5:6])
+    
+    zone = interpretRevHexString(value[6:7])
+    izone = int(zone, 16)
+    if izone>>7 == 0:
+        sign = '+'
+    else:
+        sign = '-'
+    izone = (izone % 128) / 4
+    
+    return "%s/%s/%s - %sh%sm%ss  GMT%s%u" % (day, month, year, hour, minute, second, sign, izone)
+    
+    
+ascii7 = u"@£$¥èéùìòÇ\nØø\rÅå∆_ΦΓΛΩΠΨΣΘΞ\x1bæÆßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà"
+
+
+def interpretASCII7SMS(sms):
+    res = ""
+    saved = 0
+    i = 0
+    for c in sms:
+        i += 1
+        res += ascii7[saved + ((c % (1<<(8-i))) << (i-1))]
+        saved = c >> (8-i)
+        if i == 7:
+            i = 0
+            res += ascii7[saved]
+            saved = 0
+    return res
+    
+    
+def interpretSMS(value):
+    global dcs
+    end = value.index(0xFF)
+    sms = value[0:end]
+    if dcs == 0:
+        return interpretASCII7SMS(sms)
+    return "Not yet able to handle this encoding"
+        
+    
 
 interpretingFunctions = {
     FinalType.RevHexString: interpretRevHexString,
@@ -187,6 +322,11 @@ interpretingFunctions = {
     FinalType.NumRevHexString: interpretNumRevHexString,
     FinalType.TonNpi: interpretTonNpi,
     FinalType.SMSStatus: interpretSMSStatus,
+    FinalType.SMSInfo: interpretSMSInfo,
+   # FinalType.NumberLength: interpretNumberLength,
+    FinalType.DCS: interpretDCS,
+    FinalType.TimeStamp: interpretTimeStamp,
+    FinalType.SMS: interpretSMS,
     
     FinalType.Unknown: interpretUnknown,
 }

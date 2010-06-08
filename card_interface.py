@@ -114,7 +114,7 @@ def selectFileByName(connection, name):
         hexName.append(ord(c))
     return selectFile(connection, hexName, 0x04)
 
-
+# TODO : On peut également avoir le nombre de records en prenant la taille totale (octets 2 et 3 ?) 
 def selectFile(connection, address, param1 = 0x08, param2 = 0x00):
     """selectionne un fichier"""
     global cla

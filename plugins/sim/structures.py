@@ -5,6 +5,8 @@
 
 from final_types import FinalType, FieldType
 
+numberLength = []
+
 
 structICC = [
     ("ID number", FieldType.Final, 10, "Card identification number", FinalType.RevHexString)
@@ -135,7 +137,7 @@ structNumber = [
     ("Alpha identifier", FieldType.Final, 14, "Name of the contact", FinalType.String), # TODO : la taille dépend des cartes ?
     ("Length of relevant information", FieldType.Final, 1, "", FinalType.Integer),
     ("TON and NPI", FieldType.Final, 1, "", FinalType.TonNpi),
-    ("Dialling number", FieldType.Final, 10, "Telephon number of the contact", FinalType.NumRevHexString),
+    ("Dialling number", FieldType.Final, 10, "Telephone number of the contact", FinalType.NumRevHexString),
     ("Capability/Configuration identifier", FieldType.Final, 1, "", FinalType.Integer),
     ("Extension1 record identifier", FieldType.Final, 1, "", FinalType.Integer),
 ]
@@ -143,7 +145,27 @@ structNumber = [
 
 structSMS = [
     ("Status", FieldType.Final, 1, "", FinalType.SMSStatus),
-    #("SMS", FieldType.Final, 175, "", FinalType.HexString),
+    ("SMSC data length", FieldType.Final, 1, "In bytes", FinalType.Integer),
+    ("SMSC TON and NPI", FieldType.Final, 1, "", FinalType.TonNpi),
+    
+    # IMPORTANT TODO : La taille du numéro est variable... comment intégrer ça ?
+    ("SMSC number", FieldType.Final, 6, "Telephone number of SMS Center", FinalType.NumRevHexString),
+    
+    ("Information", FieldType.Final, 1, "", FinalType.SMSInfo),
+    ("Sender data length", FieldType.Final, 1, "In digits", FinalType.Integer),
+    ("Sender TON and NPI", FieldType.Final, 1, "", FinalType.TonNpi),
+    
+    # TODO : Reconnaître le sender en reconstituant l'annuaire
+    ("Sender number", FieldType.Final, 6, "Telephone number of the sender", FinalType.NumRevHexString),
+    
+    # TODO : Meilleure interprétation ?
+     ("Protocol Identifier", FieldType.Final, 1, "", FinalType.Integer),
+     
+     ("Data Coding Scheme", FieldType.Final, 1, "", FinalType.DCS),
+     ("Timestamp", FieldType.Final, 7, "Date and time when the message was sent", FinalType.TimeStamp),
+     ("User data length", FieldType.Final, 1, "", FinalType.Integer),
+     
+    ("SMS", FieldType.Final, -1, "", FinalType.SMS),
 ]
 
 structDFTel = [
