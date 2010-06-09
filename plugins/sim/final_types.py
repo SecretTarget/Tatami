@@ -33,3 +33,4 @@ class FinalType:
     DCS = 0.001
     TimeStamp = 0.002
     SMS = 0.003
+    Contact = 0.004

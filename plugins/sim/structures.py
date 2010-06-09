@@ -134,7 +134,7 @@ structGSM = [
 #################################################################
 
 structNumber = [
-    ("Alpha identifier", FieldType.Final, 14, "Name of the contact", FinalType.String), # TODO : la taille dépend des cartes ?
+    ("Alpha identifier", FieldType.Final, 14, "Name of the contact", FinalType.Contact), # TODO : la taille dépend des cartes ?
     ("Length of relevant information", FieldType.Final, 1, "", FinalType.Integer),
     ("TON and NPI", FieldType.Final, 1, "", FinalType.TonNpi),
     ("Dialling number", FieldType.Final, 10, "Telephone number of the contact", FinalType.NumRevHexString),
@@ -154,8 +154,6 @@ structSMS = [
     ("Information", FieldType.Final, 1, "", FinalType.SMSInfo),
     ("Sender data length", FieldType.Final, 1, "In digits", FinalType.Integer),
     ("Sender TON and NPI", FieldType.Final, 1, "", FinalType.TonNpi),
-    
-    # TODO : Reconnaître le sender en reconstituant l'annuaire
     ("Sender number", FieldType.Final, 6, "Telephone number of the sender", FinalType.NumRevHexString),
     
     # TODO : Meilleure interprétation ?

@@ -10,6 +10,9 @@ from codes import MCCs, MNCs
 mncBase = ""
 tonNPI = 0
 dcs = -1
+contact = ""
+annuaire = {}
+smsHeader = False
 
    
 def interpretUnknown(value):
@@ -135,7 +138,7 @@ def interpretPhase(value):
         
 
 def interpretNumRevHexString(value):
-    global tonNPI
+    global tonNPI, contact, annuaire
     txt = interpretRevHexString(value)
     number = ""
     if tonNPI == 0x91:
@@ -153,6 +156,17 @@ def interpretNumRevHexString(value):
             number += '?'
         else:
             break
+            
+    if number[0] == '+':
+            entry = number[3:]
+    else:
+        entry = number[1:]
+    if len(contact)>0:
+        annuaire[entry] = contact
+        contact = ""
+    else:
+        if entry in annuaire:
+            number += " (%s)" % annuaire[entry]
     return number
     
 
@@ -207,11 +221,16 @@ SRIs = {
 
 # TODO : Lequel est le bon ? Le premier est de moi, le deuxième de SIM Reader...
 def interpretSMSInfo(value):
+    global smsHeader
     code = value[0]
     mti = matchWithIntCode(MTIs, code % 4)
     mms = matchWithIntCode(MMSs, (code>>2) % 2)
     rp = matchWithIntCode(RPs, (code>>7) % 2)
     udhi = matchWithIntCode(UDHIs, (code>>6) % 2)
+    if (code>>6) % 2 == 0:
+        smsHeader = False
+    else:
+        smsHeader = True
     sri = matchWithIntCode(SRIs, (code>>5) % 2)
     return "Type: %s, %s, %s, %s, %s" % (mti, mms, rp, udhi, sri)
 
@@ -297,13 +316,20 @@ def interpretASCII7SMS(sms):
     
     
 def interpretSMS(value):
-    global dcs
+    global dcs, smsHeader
+    if smsHeader:
+        return "Not yet able to understand SMS with headers"
     end = value.index(0xFF)
     sms = value[0:end]
     if dcs == 0:
         return interpretASCII7SMS(sms)
     return "Not yet able to handle this encoding"
         
+    
+def interpretContact(value):
+    global contact
+    contact = interpretString(value)
+    return contact
     
 
 interpretingFunctions = {
@@ -327,6 +353,7 @@ interpretingFunctions = {
     FinalType.DCS: interpretDCS,
     FinalType.TimeStamp: interpretTimeStamp,
     FinalType.SMS: interpretSMS,
+    FinalType.Contact: interpretContact,
     
     FinalType.Unknown: interpretUnknown,
 }
