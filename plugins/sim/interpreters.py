@@ -157,6 +157,8 @@ def interpretNumRevHexString(value):
         else:
             break
             
+    if len(number) == 0:
+        return "Empty number"
     if number[0] == '+':
             entry = number[3:]
     else:

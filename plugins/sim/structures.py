@@ -170,6 +170,8 @@ structDFTel = [
     ("Abbreviated dialling numbers", FieldType.EF, [0x6f, 0x3a], structNumber),
     ("Fixed dialling numbers", FieldType.EF, [0x6f, 0x3b], structNumber),
     ("SMS (Short messages)", FieldType.EF, [0x6f, 0x3c], structSMS),
+    ("Mobile Station international ISDN numbers", FieldType.EF, [0x6f, 0x40], structNumber),
+    ("Last numbers dialled", FieldType.EF, [0x6f, 0x44], structNumber),
 ]
 
 
