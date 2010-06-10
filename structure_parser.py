@@ -316,7 +316,10 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                     entry["Keys"] = subkeys
                 elif field[1] == FieldType.Final:
                     length = field[2]
+                    if type(length)==type([]):
+                        length = length[0]
                     if length != 0:
+                        #print length
                         value = data[0:length]
                         data = data[length:]
                         total += length

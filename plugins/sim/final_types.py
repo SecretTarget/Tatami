@@ -34,3 +34,7 @@ class FinalType:
     TimeStamp = 0.002
     SMS = 0.003
     Contact = 0.004
+    Length = 0.005
+    SMSLength = 0.006
+    NumberLengthBytes = 0.007
+    NumberLengthDigits = 0.008

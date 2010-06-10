@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import structures
+import math
 
 from final_types import FinalType
 from codes import MCCs, MNCs
@@ -321,7 +322,9 @@ def interpretSMS(value):
     global dcs, smsHeader
     if smsHeader:
         return "Not yet able to understand SMS with headers"
-    end = value.index(0xFF)
+    end = len(value)
+    if 0xFF in value:
+        end = value.index(0xFF)
     sms = value[0:end]
     if dcs == 0:
         return interpretASCII7SMS(sms)
@@ -333,6 +336,33 @@ def interpretContact(value):
     contact = interpretString(value)
     return contact
     
+    
+def interpretLength(value):
+    length = interpretInteger(value)
+    structures.fieldLength[0] = int(length)
+    return length
+    
+    
+def interpretSMSLength(value):
+    global dcs
+    length = interpretInteger(value)
+    ilength = int(length)
+    if dcs == 0:    # 7-bit encoding
+        structures.fieldLength[0] = int(math.ceil(ilength*7/8.))
+    else:
+        structures.fieldLength[0] = ilength
+    return length
+
+
+def interpretNumberLengthBytes(value):
+    value[0] -= 1
+    return interpretLength(value)
+    
+    
+def interpretNumberLengthDigits(value):
+    value[0] = int(math.ceil(value[0]/2.))
+    return interpretLength(value)
+
 
 interpretingFunctions = {
     FinalType.RevHexString: interpretRevHexString,
@@ -356,6 +386,10 @@ interpretingFunctions = {
     FinalType.TimeStamp: interpretTimeStamp,
     FinalType.SMS: interpretSMS,
     FinalType.Contact: interpretContact,
+    FinalType.Length: interpretLength,
+    FinalType.SMSLength: interpretSMSLength,
+    FinalType.NumberLengthBytes: interpretNumberLengthBytes,
+    FinalType.NumberLengthDigits: interpretNumberLengthDigits,
     
     FinalType.Unknown: interpretUnknown,
 }
