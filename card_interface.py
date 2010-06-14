@@ -13,6 +13,7 @@ import display
 # FIXME, ca devrait etre une var globale pour tous les py
 verboseMode = False
 cla = 0
+lastRecordSize = 0
 
 
 def getReadersList():
@@ -23,6 +24,8 @@ def getReadersList():
         
         
 def sendAPDU(connection, apdu):
+    #print connection
+    #print apdu
     response, sw1, sw2 = connection.transmit(apdu)
     if verboseMode: display.printExchange(apdu, response, sw1, sw2)
     return response, sw1, sw2
@@ -138,17 +141,23 @@ def readData(connection, size):
     return sendAPDU(connection, apdu)
     
 
-def readRecord(connection, number, length=29, mode = 0x04):
+def readRecord(connection, number, length=0, mode = 0x04):
     """Lit un enregistrement dans un fichier selectionné."""
-    global cla
+    global cla, lastRecordSize
     ins = 0xb2
-    #mode = 0x04
-    #mode = 0x3c
+    if length == 0:
+        length = lastRecordSize
     apdu = [cla, ins, number, mode, length]
     response, sw1, sw2 = sendAPDU(connection, apdu)
-    if statusBadLength(sw1, sw2):
+    if statusBadLengthWithCorrection(sw1, sw2):
         apdu[4] = sw2
         response, sw1, sw2 = sendAPDU(connection, apdu)
+    elif statusBadLength(sw1, sw2):
+        if length == 0:
+            length = 0x100
+        response, sw1, sw2 = readRecord(connection, number, length-1, mode)
+    else:
+        lastRecordSize = length
     return response, sw1, sw2
 
 '''
@@ -187,7 +196,11 @@ def statusWrongParameters(sw1, sw2):
     return (sw1==0x6a and sw2==0x86)
 
 def statusBadLength(sw1, sw2):
-    """retourne True ssi on a demandé une mauvaise longueur de record."""
+    """retourne True ssi on a demandé une mauvaise longueur de record et que la carte ne nous renvoie pas la bonne taille."""
+    return sw1 == 0x67 and sw2==0x00
+
+def statusBadLengthWithCorrection(sw1, sw2):
+    """retourne True ssi on a demandé une mauvaise longueur de record et que la carte nous renvoie la bonne taille."""
     return sw1 == 0x6c
     
 def statusHasResponse(sw1, sw2):

@@ -265,7 +265,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                         entry = "Could not select the file in order to fetch the data"
                     else:
                         if hiddenFields:
-                            size = []
+                            newSizeParsed = []
                             entry = []
                             for i in range(len(name)):
                                 entry.append({})
@@ -283,8 +283,8 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                                 if hiddenFields:
                                     counter = 0
                                     for struct in field[3]:
-                                        entry[counter][number] = parseCardStruct(connection, struct, cardData, size)
-                                        cardData = cardData[size[0]:]
+                                        entry[counter][number] = parseCardStruct(connection, struct, cardData, newSizeParsed)
+                                        cardData = cardData[newSizeParsed[0]:]
                                         counter += 1
                                 else:
                                     entry[number] = parseCardStruct(connection, field[3], cardData)
