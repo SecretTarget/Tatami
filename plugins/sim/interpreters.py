@@ -282,6 +282,8 @@ def interpretDCS(value):
     
 # TODO : ordre d'affichage des infos ?
 def interpretTimeStamp(value):
+    if value == [0xff]*len(value):
+        return ""
     year = interpretRevHexString(value[0:1])
     month = interpretRevHexString(value[1:2])
     day = interpretRevHexString(value[2:3])
@@ -355,11 +357,17 @@ def interpretSMSLength(value):
 
 
 def interpretNumberLengthBytes(value):
+    if value[0] == 0xff:
+        structures.fieldLength[0] = 1
+        return ""
     value[0] -= 1
     return interpretLength(value)
     
     
 def interpretNumberLengthDigits(value):
+    if value[0] == 0xff:
+        structures.fieldLength[0] = 1
+        return ""
     value[0] = int(math.ceil(value[0]/2.))
     return interpretLength(value)
 
