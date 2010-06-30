@@ -13,7 +13,7 @@ from smartcard.ATR import ATR
 import exceptions
 
 
-MAX_RECORDS = 1000
+MAX_RECORDS = 10
 
 
 class FieldType:
@@ -327,7 +327,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                         value = data
                         data = []
                         total += len(value)
-                    print value
+                    #print value
                     interpretation = interpretFinalField(value, field[4], name)
                     # TODO : beurk
                     if type(value) == type([]):
