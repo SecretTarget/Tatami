@@ -23,11 +23,22 @@ def getReadersList():
         return []
         
         
-def sendAPDU(connection, apdu):
-    #print connection
-    #print apdu
+def transmitAPDU(connection, apdu):
+    global verboseMode
     response, sw1, sw2 = connection.transmit(apdu)
     if verboseMode: display.printExchange(apdu, response, sw1, sw2)
+    return response, sw1, sw2
+        
+        
+def sendAPDU(connection, apdu):
+    response, sw1, sw2 = transmitAPDU(connection, apdu)
+    if statusPinRequired(sw1, sw2):
+        pin = display.readPIN()
+        pinAPDU = [cla, 0x20, 0, 1, 8] + pin
+        response, sw1, sw2 = transmitAPDU(connection, pinAPDU)
+        if not statusIsOK(sw1, sw2):
+            display.errorPIN()
+        response, sw1, sw2 = transmitAPDU(connection, apdu)
     return response, sw1, sw2
         
         
@@ -206,3 +217,7 @@ def statusBadLengthWithCorrection(sw1, sw2):
 def statusHasResponse(sw1, sw2):
     """retourne True ssi il y a des informations à récupérer après un select"""
     return sw1 == 0x9f
+
+def statusPinRequired(sw1, sw2):
+    """retourne True ssi un code PIN est nécessaire"""
+    return sw1 == 0x98 and (sw2 == 0x04 or sw2==0x40)

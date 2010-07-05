@@ -2,6 +2,8 @@
 
 from smartcard.util import toHexString
 
+import sys
+
 
 # TODO : également dans les interpréteurs ?
 # TODO : Faire des fonctions dispo aux interpréteurs, du genre matchWithCode
@@ -28,6 +30,23 @@ def printExchangeWithBinary(query, response, sw1, sw2):
     """Affiche un échange query-response, avec en plus la reponse en binaire."""
     printExchange(query, response, sw1, sw2)
     print "\t ==  ", toBinaryString(response)
+
+
+def readPIN():
+    print "PIN code required, please enter it:"
+    code = raw_input('--> ')
+    code = code[0:8]
+    pin = []
+    for c in code:
+        pin.append(ord(c))
+    for i in range(len(code), 8):
+        pin.append(0xff)
+    return pin 
+
+
+def errorPIN():
+    print "Error while verifying the PIN code\n"
+    sys.exit()
 
 
 def printAddress(address, space):
