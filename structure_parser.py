@@ -5,6 +5,7 @@
 
 
 import plugin
+import display
 from card_interface import *
 
 from smartcard.util import toHexString
@@ -332,7 +333,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                     # TODO : beurk
                     if type(value) == type([]):
                         value = toHexString(value)
-                    entry = ("%-35s" % interpretation)+" ---   "+str(value)+" ("+field[3]+")"
+                    entry = display.formatOutput(interpretation, value, field[3])
 
                 if hiddenFields:
                     counter = 0

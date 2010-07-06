@@ -11,7 +11,7 @@ from smartcard.pcsc.PCSCExceptions import EstablishContextException
 import display
 
 # FIXME, ca devrait etre une var globale pour tous les py
-verboseMode = False
+apduMode = False
 cla = 0
 lastRecordSize = 0
 
@@ -26,7 +26,7 @@ def getReadersList():
 def transmitAPDU(connection, apdu):
     global verboseMode
     response, sw1, sw2 = connection.transmit(apdu)
-    if verboseMode: display.printExchange(apdu, response, sw1, sw2)
+    if apduMode: display.printExchange(apdu, response, sw1, sw2)
     return response, sw1, sw2
         
         

@@ -7,15 +7,17 @@
 import sys
 import getopt
 import card_interface
+import display
 import bruteforce
 
 optionsList = [
+    ("-a", "apdu mode, show the APDUs"),
     ("-b", "choose bruteforce mode"),
     ("-d", "choose dump mode (default, specify a plugin)"),
     ("-h", "show this help"),
     ("-l", "choose loop mode (specify a plugin)"),
     ("-r", "enable recursive mode in the bruteforce mode"),
-    ("-v", "verbose mode, show the APDUs")
+    ("-v", "verbose mode, show the raw data along with the interpretation")
 ]
 
 class UsageMode:
@@ -45,10 +47,12 @@ def main():
     
     # TODO : Faire une option pour spécifier le CLASS BYTE en paramètre dans le cas d'un BF
     for o, a in opts:
-        if o == "-h":
+        if o == "-a":
+            card_interface.apduMode = True
+        elif o == "-h":
             usage()
         elif o == "-v":
-            card_interface.verboseMode = True
+            display.verboseMode = True
         elif o == "-r":
             bruteforce.recursiveMode = True
         elif o == "-b":

@@ -4,6 +4,13 @@ from smartcard.util import toHexString
 
 import sys
 
+verboseMode = False
+
+def formatOutput(interpretation, rawdata, comment):
+    global verboseMode
+    if verboseMode:
+        return ("%-35s" % interpretation)+" ---   "+str(rawdata)+" ("+comment+")"
+    return ("%-35s" % interpretation)+" ("+comment+")"
 
 # TODO : également dans les interpréteurs ?
 # TODO : Faire des fonctions dispo aux interpréteurs, du genre matchWithCode
