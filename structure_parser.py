@@ -18,7 +18,7 @@ MAX_RECORDS = 10
 
 class FieldType:
     DF = 0.1
-    EF = 0.2
+    RecordEF = 0.2
     Bitmap = 0.3
     Final = 0.4
     Counter = 0.5
@@ -259,7 +259,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                     
                     
                 # TODO : Quand est-on en binaire ou en hexa ?
-                elif field[1] == FieldType.EF:
+                elif field[1] == FieldType.RecordEF:
                     (response, sw1, sw2, size) = selectFile(connection, data+field[2])
                     if not statusIsOK(sw1, sw2):
                         entry = "Could not select the file in order to fetch the data"

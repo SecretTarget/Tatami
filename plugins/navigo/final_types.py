@@ -1,6 +1,6 @@
 class FieldType:
     DF = 0.1
-    EF = 0.2
+    RecordEF = 0.2
     Bitmap = 0.3
     Final = 0.4
     Counter = 0.5

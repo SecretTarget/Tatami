@@ -206,34 +206,34 @@ structSpecialEventList = [("SpecialEventNumber", FieldType.Counter, 4,
 
 
 structCDFGTML = [
-    (["Environment", "Holder next to Env"], FieldType.EF, [0x20,0x01], [structEnv, structHolder]),
-    ("EventLog", FieldType.EF, [0x20, 0x10], structEvent),
-    ("Contracts", FieldType.EF, [0x20, 0x20], structContract),
-    ("Contract List", FieldType.EF, [0x20, 0x30], structContractList),
-#       ("Counters", FieldType.EF, [0x20, 0x69], structCounter),
-    ("Special Events", FieldType.EF, [0x20, 0x40], structEvent),
-#       ("Special Event List", FieldType.EF, [0x20, 0x03], structSpecialEventList)
+    (["Environment", "Holder next to Env"], FieldType.RecordEF, [0x20,0x01], [structEnv, structHolder]),
+    ("EventLog", FieldType.RecordEF, [0x20, 0x10], structEvent),
+    ("Contracts", FieldType.RecordEF, [0x20, 0x20], structContract),
+    ("Contract List", FieldType.RecordEF, [0x20, 0x30], structContractList),
+#       ("Counters", FieldType.RecordEF, [0x20, 0x69], structCounter),
+    ("Special Events", FieldType.RecordEF, [0x20, 0x40], structEvent),
+#       ("Special Event List", FieldType.RecordEF, [0x20, 0x03], structSpecialEventList)
 ]
 
 structGTML = [
-#       ("ICC", FieldType.EF, [0x00, 0x02], structICC),
-#       ("ID", FieldType.EF, [0x00, 0x03], structID),
+#       ("ICC", FieldType.RecordEF, [0x00, 0x02], structICC),
+#       ("ID", FieldType.RecordEF, [0x00, 0x03], structID),
     ("Calypso DF", FieldType.DF, [0x20, 0x00], structCDFGTML)
 ]
 
 structCDFCD97 = [
-    (["Environment", "Holder next to Env"], FieldType.EF, [0x20,0x01], [structEnv, structHolder]),
-    ("EventLog", FieldType.EF, [0x20, 0x10], structEvent),
-    ("Contracts", FieldType.EF, [0x20, 0x20], structContract),
-    ("Contract List", FieldType.EF, [0x20, 0x50], structContractList),
-#       ("Counters", FieldType.EF, [0x20, 0x69], structCounter),
-    ("Special Events", FieldType.EF, [0x20, 0x40], structEvent),
-#       ("Special Event List", FieldType.EF, [0x20, 0x03], structSpecialEventList)
+    (["Environment", "Holder next to Env"], FieldType.RecordEF, [0x20,0x01], [structEnv, structHolder]),
+    ("EventLog", FieldType.RecordEF, [0x20, 0x10], structEvent),
+    ("Contracts", FieldType.RecordEF, [0x20, 0x20], structContract),
+    ("Contract List", FieldType.RecordEF, [0x20, 0x50], structContractList),
+#       ("Counters", FieldType.RecordEF, [0x20, 0x69], structCounter),
+    ("Special Events", FieldType.RecordEF, [0x20, 0x40], structEvent),
+#       ("Special Event List", FieldType.RecordEF, [0x20, 0x03], structSpecialEventList)
 ]
 
 structCD97 = [
-#       ("ICC", FieldType.EF, [0x00, 0x02], structICC),
-#       ("ID", FieldType.EF, [0x00, 0x03], structID),
+#       ("ICC", FieldType.RecordEF, [0x00, 0x02], structICC),
+#       ("ID", FieldType.RecordEF, [0x00, 0x03], structID),
     ("Calypso DF", FieldType.DF, [0x20, 0x00], structCDFCD97)
 ]
 

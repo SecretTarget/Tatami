@@ -162,12 +162,13 @@ structSMS = [
     ("SMS", FieldType.Final, fieldLength, "", FinalType.SMS),
 ]
 
+# TODO : incomplet
 structDFTel = [
-    ("Abbreviated dialling numbers", FieldType.EF, [0x6f, 0x3a], structNumber),
-    ("Fixed dialling numbers", FieldType.EF, [0x6f, 0x3b], structNumber),
-    ("SMS (Short messages)", FieldType.EF, [0x6f, 0x3c], structSMS),
-    ("Mobile Station international ISDN numbers", FieldType.EF, [0x6f, 0x40], structNumber),
-    ("Last numbers dialled", FieldType.EF, [0x6f, 0x44], structNumber),
+    ("Abbreviated dialling numbers", FieldType.RecordEF, [0x6f, 0x3a], structNumber),
+    ("Fixed dialling numbers", FieldType.RecordEF, [0x6f, 0x3b], structNumber),
+    ("SMS (Short messages)", FieldType.RecordEF, [0x6f, 0x3c], structSMS),
+    ("Mobile Station international ISDN numbers", FieldType.RecordEF, [0x6f, 0x40], structNumber),
+    ("Last numbers dialled", FieldType.RecordEF, [0x6f, 0x44], structNumber),
 ]
 
 
