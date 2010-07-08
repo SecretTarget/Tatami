@@ -24,7 +24,7 @@ def getReadersList():
         
         
 def transmitAPDU(connection, apdu):
-    global verboseMode
+    global apduMode
     response, sw1, sw2 = connection.transmit(apdu)
     if apduMode: display.printExchange(apdu, response, sw1, sw2)
     return response, sw1, sw2
@@ -57,7 +57,7 @@ def establishConnection(connection):
     if warmResetNeeded(connection):
         connection.disconnect()
         connection.connect()
-        if verboseMode: display.printExchange("reset", getATR(connection), 0x90, 0)
+        if apduMode: display.printExchange("reset", getATR(connection), 0x90, 0)
         
         
 def connectToCard(card):
@@ -129,7 +129,7 @@ def selectFileByName(connection, name):
     return selectFile(connection, hexName, 0x04)
 
 # TODO : On peut également avoir le nombre de records en prenant la taille totale (octets 2 et 3 ?) 
-def selectFile(connection, address, param1 = 0x08, param2 = 0x00):
+def selectFile(connection, address, param1 = 0x00, param2 = 0x00):
     """selectionne un fichier"""
     global cla
     ins = 0xa4
@@ -137,6 +137,12 @@ def selectFile(connection, address, param1 = 0x08, param2 = 0x00):
     addressLen = len(address)
     apdu = [cla, ins, param1, param2, addressLen] + address
     response, sw1, sw2 = sendAPDU(connection, apdu)
+    
+    if statusBadLength(sw1, sw2) and addressLen>2:  # On sélectionne les DF un par un
+        for i in range(addressLen/2):
+            apdu = [cla, ins, param1, param2, 2] + address[2*i:2*(i+1)]
+            response, sw1, sw2 = sendAPDU(connection, apdu)
+        
     size = 0
     if statusHasResponse(sw1, sw2):
         size = findEFSize(connection, sw2)
