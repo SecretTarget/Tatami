@@ -14,7 +14,7 @@ from smartcard.ATR import ATR
 import exceptions
 
 
-MAX_RECORDS = 1000
+MAX_RECORDS = 10
 
 
 class FieldType:
@@ -252,7 +252,7 @@ def parseCardStruct(connection, structure, data=[], sizeParsed=[], defaultStruct
                     #    size = findTransparentEFSize(connection, sw2)
                     #except:
                     #    entry = "File not found"
-                    if not statusIsOK(sw1, sw2) or size == 0:
+                    if not statusIsOK(sw1, sw2): # or size == 0:
                         entry = "File not found"
                     else:
                         hexdata, sw1, sw2 = readData(connection, size)
