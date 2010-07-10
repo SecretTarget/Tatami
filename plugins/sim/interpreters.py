@@ -161,7 +161,9 @@ def interpretNumRevHexString(value):
     if len(number) == 0:
         return "Empty number"
     if number[0] == '+':
-            entry = number[3:]
+        entry = number[3:]
+    elif number[0]=='0' and number[1]=='0':
+        entry = number[4:]
     else:
         entry = number[1:]
     if len(contact)>0:

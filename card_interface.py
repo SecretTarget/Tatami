@@ -214,7 +214,7 @@ def statusWrongParameters(sw1, sw2):
 
 def statusBadLength(sw1, sw2):
     """retourne True ssi on a demandé une mauvaise longueur de record et que la carte ne nous renvoie pas la bonne taille."""
-    return sw1 == 0x67 and sw2==0x00
+    return sw1 == 0x67 #and sw2==0x00
 
 def statusBadLengthWithCorrection(sw1, sw2):
     """retourne True ssi on a demandé une mauvaise longueur de record et que la carte nous renvoie la bonne taille."""
