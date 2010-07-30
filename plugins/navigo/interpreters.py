@@ -168,7 +168,10 @@ def interpretRouteNumber(value):
     elif "EventCode" in globalValues and globalValues["EventCode"].split()[0]=="Train" and int(value, 2)>16:
         return "RER  "+chr(ord('A')+int(value,2)-17)    
     else:
-        return "Ligne " + interpretInteger(value) # temporaire, mais plus lisible
+        line = interpretInteger(value)
+        if line == "103":
+            return "Ligne 3 bis"
+        return "Ligne " + line # temporaire, mais plus lisible
 
 
 def interpretLocationId(value):
@@ -193,8 +196,8 @@ def interpretLocationId(value):
         res += code + " (inconnu)"
         return res
     for station in table[code]:
-        res += '"'+station+'"'+" or "
-    return res[0:len(res)-4]
+        res += station + ", "
+    return res[0:len(res)-2]
 
 
 def interpretEventDevice(value):

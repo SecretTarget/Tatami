@@ -64,6 +64,7 @@ metroStations = {
     "06-05": ["OPERA"],
     "06-06": ["AUBER"],
     "06-07": ["HAVRE-CAUMARTIN"],
+    "06-08": ["SAINT-LAZARE"],
     "06-09": ["SAINT-LAZARE"],
     "06-10": ["SAINT-AUGUSTIN"],
     "06-12": ["EUROPE"],
